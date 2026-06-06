@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User{
+  id           String @id @default(uuid())
+  email        String @unique
+  passwordHash String
+  balance      Float   @default(0)
+  lockedBalance Float @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Order {
+  id      String  @id @default(uuid())
+  userId  String
+  market  String  // BTC,ETH,SOL
+  side    String  //buy,sell
+  type    String  //limit or market
+  status  String  @default("open")  //open,filled,cancelled
+  price   Float?
+  quantity   Float
+  createdAt   DateTime @default(now())
+}
+
+model Fill{
+  id  String @id @default(uuid())
+  buyOrderId String
+  sellOrderId   String
+  buyerId    String 
+  sellerId   String
+  market     String
+  price    Float
+  quantity  Float 
+  createdAt   DateTime @default(now())
+}
+
+model Position {
+  id  String @id @default(uuid())
+  userId String
+  market  String
+  
+  side String
+  status   String @default("open")//open, closed
+
+  quantity Float
+  entryPrice Float 
+  leverage  Float 
+  margin    Float
+  pnl      Float @default(0)
+  
+  createdAt  DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
