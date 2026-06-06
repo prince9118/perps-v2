@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: perps-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: perps
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    container_name: perps-redis
+    ports:
+      - "6379:6379"
