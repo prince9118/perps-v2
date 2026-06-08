@@ -6,6 +6,7 @@ import express from "express";
 import cors from "cors";
 import { success } from "zod";
 import {authMiddleware} from "./middleware/auth";
+import {redis} from "@repo/redis";
 const app=express();
 
 app.use(cors());
@@ -116,6 +117,72 @@ app.get("/auth/me",authMiddleware,async(req:any,res)=>{
     });
     
 });
+
+
+// redis test order 
+
+app.post("/test-order",async(req,res)=>{
+    const {market,side,quantity}=req.body; 
+    const event ={
+        market, 
+        side,
+        quantity,
+        timestamp:Date.now(),
+    };
+    const messageId= await redis.xadd(
+        "order_events",
+        "*",
+        "type",
+        "ORDER_CREATE",
+        "data",
+        JSON.stringify(event),
+        
+    );
+    res.json({
+        success:true,
+        messageId,
+    });
+});
+
+app.post("/orders",authMiddleware,async(req:any,res)=>{
+    const {market,side,type,price,quantity,leverage}=req.body;
+    if(!market || !side || !type || !quantity || !leverage){
+        return res.status(400).json({
+            message:"market ,side ,type ,quantity,and leverage are required",
+        });
+    }
+    if(type === "limit" &&  !price){
+        return res.status(400).json({
+            message:"Price is required fot limit Order",
+        });
+    }
+    const event={
+        userId:req.user.userId,
+        market,
+        side,
+        type,
+        price,
+        quantity,
+        leverage,
+        timestamp:Date.now(),
+    };
+    const messageId= await redis.xadd(
+        "order_events",// stream name
+        "*",// message Id
+        "type",// event
+        "ORDER_CREATE",
+        "data",
+        JSON.stringify(event)
+    );
+    res.json({
+        success:true,
+        message:"Order Submitted",
+        messageId
+    })
+
+})
+// orderbook for testing purpose
+
 
 app.listen(port,()=>{
     console.log(`Backend is Working on Port ${port}`);

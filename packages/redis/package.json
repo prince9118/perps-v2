@@ -1,6 +1,6 @@
 {
-  "name": "redis",
-  "module": "index.ts",
+  "name": "@repo/redis",
+  "main":"./src/index.ts",
   "type": "module",
   "private": true,
   "devDependencies": {

@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+export * from "./events";
 
 
 export const redis=new Redis({

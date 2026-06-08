@@ -1,0 +1,13 @@
+{
+    "name": "engine",
+    "module": "index.ts",
+    "type": "module",
+    "private":"true",
+    "dependencies": {
+        "@repo/redis":"workspace:*",
+        "@repo/types": "workspace:*"
+    },
+    "scripts": {
+        "dev":"bun run src/index.ts"
+    }
+}
