@@ -1,0 +1,12 @@
+{
+    "name": "db-worker",
+    "private":true,
+    "type": "module",
+    "dependencies": {
+        "@repo/db":"workspace:*",
+        "@repo/redis":"workspace:*"
+    },
+    "scripts": {
+        "dev":"bun run src/index.ts"
+    }
+}

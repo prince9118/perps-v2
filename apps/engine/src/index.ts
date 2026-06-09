@@ -45,38 +45,49 @@ async function main() {
     const [streamName, messages] = result[0];
 
     for (const [messageId, fields] of messages) {
-    const parsedFields = parseRedisFields(fields);
+      const parsedFields = parseRedisFields(fields);
 
-    const event = {
-        type: parsedFields.type,
-        data: JSON.parse(parsedFields.data),
-    };
-
-    console.log("Message ID:", messageId);
-    console.log("Event:", event);
-
-    lastId = messageId;
-    if(event.type==="ORDER_CREATE"){
-      const order:EngineOrder={
-        id:messageId,
-        userId:event.data.userId,
-        market:event.data.market,
-        side:event.data.side,
-        type:event.data.type,
-        price:event.data.price,
-        quantity:event.data.quantity,
-        leverage:event.data.leverage,
-        status:"open",
-        createdAt:event.data.timestamp,
+      const event = {
+          type: parsedFields.type,
+          data: JSON.parse(parsedFields.data),
       };
-      const book=getOrderBook(order.market);
-      if(order.type==="limit"){
-        book.addOrder(order);
-        const fills=book.matchOrders();
-        console.log("fills:",fills);
+
+      console.log("Message ID:", messageId);
+      console.log("Event:", event);
+
+      lastId = messageId;
+      if(event.type==="ORDER_CREATE"){
+        const order:EngineOrder={
+          id:messageId,
+          userId:event.data.userId,
+          market:event.data.market,
+          side:event.data.side,
+          type:event.data.type,
+          price:event.data.price,
+          quantity:event.data.quantity,
+          leverage:event.data.leverage,
+          status:"open",
+          createdAt:event.data.timestamp,
+        };
+        const book=getOrderBook(order.market);
+        if(order.type==="limit"){
+          book.addOrder(order);
+          const fills=book.matchOrders();
+          // console.log("fills:",fills);
+          for(const fill of fills){
+            await redis.xadd(
+              "trade_events",
+              "*",
+              "type",
+              "TRADE_CREATED",
+              "data",
+              JSON.stringify(fill)
+            );
+            console.log("Trade Published",messageId,);
+          }
+        }
+        // console.log("current OrderBook", orderBoook.getOrderBook());
       }
-      // console.log("current OrderBook", orderBoook.getOrderBook());
-    }
     }
   }
 }

@@ -4,6 +4,9 @@
   "workspaces": {
     "": {
       "name": "perps-v2",
+      "dependencies": {
+        "dotenv": "^17.4.2",
+      },
       "devDependencies": {
         "@types/bun": "^1.3.14",
         "turbo": "latest",
@@ -30,6 +33,13 @@
       },
       "peerDependencies": {
         "typescript": "^6.0.3",
+      },
+    },
+    "apps/db-worker": {
+      "name": "db-worker",
+      "dependencies": {
+        "@repo/db": "workspace:*",
+        "@repo/redis": "workspace:*",
       },
     },
     "apps/engine": {
@@ -230,6 +240,8 @@
     "cross-spawn": ["cross-spawn@7.0.6", "", { "dependencies": { "path-key": "^3.1.0", "shebang-command": "^2.0.0", "which": "^2.0.1" } }, "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA=="],
 
     "csstype": ["csstype@3.2.3", "", {}, "sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ=="],
+
+    "db-worker": ["db-worker@workspace:apps/db-worker"],
 
     "debug": ["debug@4.4.3", "", { "dependencies": { "ms": "^2.1.3" } }, "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA=="],
 
