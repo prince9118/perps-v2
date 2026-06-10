@@ -58,7 +58,7 @@ async function main() {
       lastId = messageId;
       if(event.type==="ORDER_CREATE"){
         const order:EngineOrder={
-          id:messageId,
+          id:event.data.orderId,
           userId:event.data.userId,
           market:event.data.market,
           side:event.data.side,

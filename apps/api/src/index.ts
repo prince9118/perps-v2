@@ -156,7 +156,21 @@ app.post("/orders",authMiddleware,async(req:any,res)=>{
             message:"Price is required fot limit Order",
         });
     }
+
+    const dbOrder=await prisma.order.create({
+        data:{
+            userId:req.user.userId,
+            market,
+            side,
+            type,
+            status:"open",
+            price:type==="limit"?price:null,
+            quantity,
+        },
+    });
+    
     const event={
+        orderId:dbOrder.id,
         userId:req.user.userId,
         market,
         side,
@@ -166,6 +180,7 @@ app.post("/orders",authMiddleware,async(req:any,res)=>{
         leverage,
         timestamp:Date.now(),
     };
+   
     const messageId= await redis.xadd(
         "order_events",// stream name
         "*",// message Id
@@ -177,6 +192,7 @@ app.post("/orders",authMiddleware,async(req:any,res)=>{
     res.json({
         success:true,
         message:"Order Submitted",
+        order:dbOrder,
         messageId
     })
 
