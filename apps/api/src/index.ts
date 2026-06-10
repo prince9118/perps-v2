@@ -198,7 +198,47 @@ app.post("/orders",authMiddleware,async(req:any,res)=>{
     })
 
 })
-// orderbook for testing purpose
+
+// get the users order
+
+app.get("/orders",authMiddleware,async(req:any,res)=>{
+    const orders=await prisma.order.findMany({
+        where:{
+            userId:req.user.userId,
+        },
+        orderBy:{
+            createdAt:"desc",
+        },
+    });
+    res.json({
+        success:true,
+        orders,
+    });
+});
+
+// get user fills
+
+app.get("/fills",authMiddleware,async(req:any,res)=>{
+     console.log("req.user in fills:", req.user);
+    const fills=await prisma.fill.findMany({
+        where:{
+            OR:[
+                {buyerId: req.user.userId},
+                {sellerId: req.user.userId},
+
+            ],
+        },
+         orderBy:{
+            createdAt:"desc",
+        },
+
+    });
+    res.json({
+        success:true,
+        fills,
+    });
+
+});
 
 
 app.listen(port,()=>{
