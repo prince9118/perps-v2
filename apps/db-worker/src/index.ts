@@ -13,10 +13,8 @@ function parseRedisFields(fields: string[]) {
 
   return obj;
 }
-
-async function main() {
-  console.log("DB Worker Started");
-  let lastId = "$";
+async function processTradeEvents(){
+  let lastTradeId="$";
   while (true) {
     console.log("Waiting for trade...");
     const result = await redis.xread(
@@ -24,7 +22,7 @@ async function main() {
       0,
       "STREAMS",
       "trade_events",
-      lastId
+      lastTradeId
     );
 
     if (!result) continue;
@@ -50,9 +48,52 @@ async function main() {
             });
             console.log("Fill saved to DB",fill);
         }
-        lastId=messageId;
+        lastTradeId=messageId;
     }
   }
+}
+async function processOrderUpdate(){
+  let lastOrderUpdateId="$";
+  while(true){
+    const result=await redis.xread(
+      "BLOCK",
+      "0",
+      "STREAMS",
+      "order_update_events",
+      lastOrderUpdateId
+    );
+    if(!result)continue;
+    const[streamName,messages]=result[0];
+    for (const [messageId,fields]of messages){
+      const parsedFields=parseRedisFields(fields);
+      const event={
+        type:parsedFields.type,
+        data:JSON.parse(parsedFields.data)
+      };
+      if(event.type==="ORDER_UPDATED"){
+        await prisma.order.update({
+          where:{
+            id:event.data.orderId
+          },
+          data:{
+            status:event.data.status,
+            quantity:event.data.quantity
+          }
+        });
+        console.log("Order Updated",event.data);
+      }
+      lastOrderUpdateId=messageId;
+    }
+  }
+}
+
+
+async function main(){
+  console.log("DB Worker Started");
+  await Promise.all([
+    processTradeEvents(),
+    processOrderUpdate()
+  ]);
 }
 
 main();

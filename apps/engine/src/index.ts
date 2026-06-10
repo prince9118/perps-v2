@@ -72,7 +72,8 @@ async function main() {
         const book=getOrderBook(order.market);
         if(order.type==="limit"){
           book.addOrder(order);
-          const fills=book.matchOrders();
+          // const fills=book.matchOrders();
+          const{fills,updatedOrders}=book.matchOrders();
           // console.log("fills:",fills);
           for(const fill of fills){
             await redis.xadd(
@@ -85,7 +86,24 @@ async function main() {
             );
             console.log("Trade Published",messageId,);
           }
+          for(const updatedOrder of updatedOrders){
+            const messageId= await redis.xadd(
+              "order_update_events",
+              "*",
+              "type",
+              "ORDER_UPDATED",
+              "data",
+              JSON.stringify({
+                orderId:updatedOrder.id,
+                status:updatedOrder.status,
+                quantity:updatedOrder.quantity
+              })
+            );
+            console.log("Order updated Published",messageId)
+          }
         }
+        
+       
         
       }
     }

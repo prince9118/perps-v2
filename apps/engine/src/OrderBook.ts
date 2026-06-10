@@ -65,8 +65,12 @@ export class OrderBook{
         }
     }
 
-    matchOrders():EngineFill[]{
+    matchOrders():{
+        fills:EngineFill[];
+        updatedOrders:EngineOrder[];
+    }{
         const fills:EngineFill[]=[];
+        const updatedOrders:EngineOrder[]=[];
         while(this.canMatch()){
             const bestBid=this.getBestBid()!;
             const bestAsk=this.getBestAsk()!;
@@ -83,6 +87,9 @@ export class OrderBook{
             this.updateOrderStatus(bestBid);
             this.updateOrderStatus(bestAsk);
            
+            updatedOrders.push(bestBid);
+            updatedOrders.push(bestAsk);
+
             const fill:EngineFill={
                 buyOrderId:bestBid.id,
                 sellOrderId:bestAsk.id,
@@ -94,10 +101,14 @@ export class OrderBook{
                 timestamp:Date.now(),
             };
             fills.push(fill);
-            this.buyOrders= this.buyOrders.filter(o=>o.quantity>0);
-            this.sellorders=this.sellorders.filter(o=>o.quantity>0);
+            this.buyOrders= this.buyOrders.filter(o=>o.quantity >0);
+            this.sellorders=this.sellorders.filter(o=>o.quantity >0);
 
         }
-        return fills;
+        return{
+            fills,
+            updatedOrders
+
+        };
     }
 }
