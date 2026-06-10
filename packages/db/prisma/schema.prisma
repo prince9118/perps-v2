@@ -26,7 +26,9 @@ model Order {
   status  String  @default("open")  //open,filled,cancelled
   price   Float?
   quantity   Float
+  originalQuantity Float
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Fill{

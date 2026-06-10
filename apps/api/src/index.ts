@@ -166,9 +166,10 @@ app.post("/orders",authMiddleware,async(req:any,res)=>{
             status:"open",
             price:type==="limit"?price:null,
             quantity,
+            originalQuantity:quantity
         },
     });
-    
+
     const event={
         orderId:dbOrder.id,
         userId:req.user.userId,
