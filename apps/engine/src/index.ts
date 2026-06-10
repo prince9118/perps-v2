@@ -86,7 +86,7 @@ async function main() {
             console.log("Trade Published",messageId,);
           }
         }
-        // console.log("current OrderBook", orderBoook.getOrderBook());
+        
       }
     }
   }

@@ -7,7 +7,7 @@ export interface EngineOrder{
     price?:number;
     quantity:number;
     leverage:number;
-    status:"open"|"filled"|"cancelled";
+    status: "open"| "partial"| "filled" | "cancelled";
     createdAt:number;
 }
 export interface EngineFill{
@@ -57,6 +57,13 @@ export class OrderBook{
         }
         return (bestBid.price??0)>=(bestAsk.price??0);
     }
+    updateOrderStatus(order:EngineOrder){
+        if(order.quantity===0){
+            order.status="filled";
+        }else{
+            order.status="partial";
+        }
+    }
 
     matchOrders():EngineFill[]{
         const fills:EngineFill[]=[];
@@ -72,6 +79,10 @@ export class OrderBook{
             );
             bestBid.quantity-=tradeQty;
             bestAsk.quantity-=tradeQty;
+
+            this.updateOrderStatus(bestBid);
+            this.updateOrderStatus(bestAsk);
+           
             const fill:EngineFill={
                 buyOrderId:bestBid.id,
                 sellOrderId:bestAsk.id,

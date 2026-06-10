@@ -1,4 +1,4 @@
-import { OrderStatus } from "./market";
+import type {OrderStatus}  from "./market";
  export type OrderSide="buy" | "sell";
 export type OrderType="limit"|"market";
 
@@ -12,5 +12,6 @@ export interface Order{
     status:OrderStatus;
     price?:number;
     quantity:number;
+    originalQuantity:number;
     createdAt:number;
 }
