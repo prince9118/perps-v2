@@ -764,7 +764,10 @@ export const OrderScalarFieldEnum = {
   status: 'status',
   price: 'price',
   quantity: 'quantity',
-  createdAt: 'createdAt'
+  originalQuantity: 'originalQuantity',
+  leverage: 'leverage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]

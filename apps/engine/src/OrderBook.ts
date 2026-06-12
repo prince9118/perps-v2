@@ -19,6 +19,8 @@ export interface EngineFill{
     market:string;
     price?:number;
     quantity:number;
+    buyerLeverage: number;
+    sellerLeverage: number;
     timestamp:number;
 }
 
@@ -98,6 +100,8 @@ export class OrderBook{
                 market:bestBid.market,
                 price:bestAsk.price,
                 quantity:tradeQty,
+                buyerLeverage: bestBid.leverage,
+                sellerLeverage: bestAsk.leverage,
                 timestamp:Date.now(),
             };
             fills.push(fill);

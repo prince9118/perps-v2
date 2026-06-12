@@ -26,7 +26,8 @@ model Order {
   status  String  @default("open")  //open,filled,cancelled
   price   Float?
   quantity   Float
-  originalQuantity Float
+  originalQuantity Float @default(0)
+  leverage Float @default(1)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -49,7 +50,7 @@ model Position {
   market  String
   
   side String
-  status   String @default("open")//open, closed
+  status   String @default("open") //open, closed
 
   quantity Float
   entryPrice Float 

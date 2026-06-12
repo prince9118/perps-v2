@@ -34,19 +34,37 @@ async function processTradeEvents(){
             data: JSON.parse(parsedFields.data),
         };
         if(event.type==="TRADE_CREATED"){
-            const fill=event.data;
-            await prisma.fill.create({
-                data:{
-                    buyOrderId:fill.buyOrderId,
-                    sellOrderId:fill.sellOrderId,
-                    buyerId:fill.buyerId,
-                    sellerId:fill.sellerId,
-                    market:fill.market,
-                    price:fill.price,
-                    quantity:fill.quantity,
-                },
-            });
-            console.log("Fill saved to DB",fill);
+          const fill=event.data;
+          await prisma.fill.create({
+              data:{
+                  buyOrderId:fill.buyOrderId,
+                  sellOrderId:fill.sellOrderId,
+                  buyerId:fill.buyerId,
+                  sellerId:fill.sellerId,
+                  market:fill.market,
+                  price:fill.price,
+                  quantity:fill.quantity,
+              },
+          });
+          // buyer get the long position
+          await updatePosition({
+            userId:fill.buyerId,
+            market:fill.market,
+            side:"long",
+            price:fill.price,
+            quantity:fill.quantity,
+            leverage:fill.buyerLeverage,
+          });
+          // sort for the seller
+          await updatePosition({
+            userId:fill.sellerId,
+            market:fill.market,
+            side:"short",
+            price:fill.price,
+            quantity:fill.quantity,
+            leverage:fill.sellerLeverage
+          });
+          console.log("Fill saved to DB",fill);
         }
         lastTradeId=messageId;
     }
@@ -57,7 +75,7 @@ async function processOrderUpdate(){
   while(true){
     const result=await redis.xread(
       "BLOCK",
-      "0",
+      0,
       "STREAMS",
       "order_update_events",
       lastOrderUpdateId
@@ -120,7 +138,7 @@ async function updatePosition(params:{
     });
     return;
   }
-  const oldNotional=existingPosition.quantity*params.quantity;
+  const oldNotional=existingPosition.quantity*existingPosition.quantity;
   const newNotional=params.price*params.quantity;
   const newQuantity=existingPosition.quantity+params.quantity;
   const newEntryPrice=(oldNotional+newNotional)/newQuantity;

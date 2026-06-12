@@ -29,11 +29,15 @@ export type AggregateOrder = {
 export type OrderAvgAggregateOutputType = {
   price: number | null
   quantity: number | null
+  originalQuantity: number | null
+  leverage: number | null
 }
 
 export type OrderSumAggregateOutputType = {
   price: number | null
   quantity: number | null
+  originalQuantity: number | null
+  leverage: number | null
 }
 
 export type OrderMinAggregateOutputType = {
@@ -45,7 +49,10 @@ export type OrderMinAggregateOutputType = {
   status: string | null
   price: number | null
   quantity: number | null
+  originalQuantity: number | null
+  leverage: number | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type OrderMaxAggregateOutputType = {
@@ -57,7 +64,10 @@ export type OrderMaxAggregateOutputType = {
   status: string | null
   price: number | null
   quantity: number | null
+  originalQuantity: number | null
+  leverage: number | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type OrderCountAggregateOutputType = {
@@ -69,7 +79,10 @@ export type OrderCountAggregateOutputType = {
   status: number
   price: number
   quantity: number
+  originalQuantity: number
+  leverage: number
   createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -77,11 +90,15 @@ export type OrderCountAggregateOutputType = {
 export type OrderAvgAggregateInputType = {
   price?: true
   quantity?: true
+  originalQuantity?: true
+  leverage?: true
 }
 
 export type OrderSumAggregateInputType = {
   price?: true
   quantity?: true
+  originalQuantity?: true
+  leverage?: true
 }
 
 export type OrderMinAggregateInputType = {
@@ -93,7 +110,10 @@ export type OrderMinAggregateInputType = {
   status?: true
   price?: true
   quantity?: true
+  originalQuantity?: true
+  leverage?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type OrderMaxAggregateInputType = {
@@ -105,7 +125,10 @@ export type OrderMaxAggregateInputType = {
   status?: true
   price?: true
   quantity?: true
+  originalQuantity?: true
+  leverage?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type OrderCountAggregateInputType = {
@@ -117,7 +140,10 @@ export type OrderCountAggregateInputType = {
   status?: true
   price?: true
   quantity?: true
+  originalQuantity?: true
+  leverage?: true
   createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -216,7 +242,10 @@ export type OrderGroupByOutputType = {
   status: string
   price: number | null
   quantity: number
+  originalQuantity: number
+  leverage: number
   createdAt: Date
+  updatedAt: Date
   _count: OrderCountAggregateOutputType | null
   _avg: OrderAvgAggregateOutputType | null
   _sum: OrderSumAggregateOutputType | null
@@ -251,7 +280,10 @@ export type OrderWhereInput = {
   status?: Prisma.StringFilter<"Order"> | string
   price?: Prisma.FloatNullableFilter<"Order"> | number | null
   quantity?: Prisma.FloatFilter<"Order"> | number
+  originalQuantity?: Prisma.FloatFilter<"Order"> | number
+  leverage?: Prisma.FloatFilter<"Order"> | number
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
 }
 
 export type OrderOrderByWithRelationInput = {
@@ -263,7 +295,10 @@ export type OrderOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   price?: Prisma.SortOrderInput | Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  originalQuantity?: Prisma.SortOrder
+  leverage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
@@ -278,7 +313,10 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"Order"> | string
   price?: Prisma.FloatNullableFilter<"Order"> | number | null
   quantity?: Prisma.FloatFilter<"Order"> | number
+  originalQuantity?: Prisma.FloatFilter<"Order"> | number
+  leverage?: Prisma.FloatFilter<"Order"> | number
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
 }, "id">
 
 export type OrderOrderByWithAggregationInput = {
@@ -290,7 +328,10 @@ export type OrderOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   price?: Prisma.SortOrderInput | Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  originalQuantity?: Prisma.SortOrder
+  leverage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.OrderCountOrderByAggregateInput
   _avg?: Prisma.OrderAvgOrderByAggregateInput
   _max?: Prisma.OrderMaxOrderByAggregateInput
@@ -310,7 +351,10 @@ export type OrderScalarWhereWithAggregatesInput = {
   status?: Prisma.StringWithAggregatesFilter<"Order"> | string
   price?: Prisma.FloatNullableWithAggregatesFilter<"Order"> | number | null
   quantity?: Prisma.FloatWithAggregatesFilter<"Order"> | number
+  originalQuantity?: Prisma.FloatWithAggregatesFilter<"Order"> | number
+  leverage?: Prisma.FloatWithAggregatesFilter<"Order"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
 }
 
 export type OrderCreateInput = {
@@ -322,7 +366,10 @@ export type OrderCreateInput = {
   status?: string
   price?: number | null
   quantity: number
+  originalQuantity?: number
+  leverage?: number
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type OrderUncheckedCreateInput = {
@@ -334,7 +381,10 @@ export type OrderUncheckedCreateInput = {
   status?: string
   price?: number | null
   quantity: number
+  originalQuantity?: number
+  leverage?: number
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type OrderUpdateInput = {
@@ -346,7 +396,10 @@ export type OrderUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
+  originalQuantity?: Prisma.FloatFieldUpdateOperationsInput | number
+  leverage?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OrderUncheckedUpdateInput = {
@@ -358,7 +411,10 @@ export type OrderUncheckedUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
+  originalQuantity?: Prisma.FloatFieldUpdateOperationsInput | number
+  leverage?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OrderCreateManyInput = {
@@ -370,7 +426,10 @@ export type OrderCreateManyInput = {
   status?: string
   price?: number | null
   quantity: number
+  originalQuantity?: number
+  leverage?: number
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type OrderUpdateManyMutationInput = {
@@ -382,7 +441,10 @@ export type OrderUpdateManyMutationInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
+  originalQuantity?: Prisma.FloatFieldUpdateOperationsInput | number
+  leverage?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OrderUncheckedUpdateManyInput = {
@@ -394,7 +456,10 @@ export type OrderUncheckedUpdateManyInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
+  originalQuantity?: Prisma.FloatFieldUpdateOperationsInput | number
+  leverage?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OrderCountOrderByAggregateInput = {
@@ -406,12 +471,17 @@ export type OrderCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   price?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  originalQuantity?: Prisma.SortOrder
+  leverage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type OrderAvgOrderByAggregateInput = {
   price?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  originalQuantity?: Prisma.SortOrder
+  leverage?: Prisma.SortOrder
 }
 
 export type OrderMaxOrderByAggregateInput = {
@@ -423,7 +493,10 @@ export type OrderMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   price?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  originalQuantity?: Prisma.SortOrder
+  leverage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type OrderMinOrderByAggregateInput = {
@@ -435,12 +508,17 @@ export type OrderMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   price?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  originalQuantity?: Prisma.SortOrder
+  leverage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type OrderSumOrderByAggregateInput = {
   price?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  originalQuantity?: Prisma.SortOrder
+  leverage?: Prisma.SortOrder
 }
 
 export type NullableFloatFieldUpdateOperationsInput = {
@@ -462,7 +540,10 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   status?: boolean
   price?: boolean
   quantity?: boolean
+  originalQuantity?: boolean
+  leverage?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["order"]>
 
 export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -474,7 +555,10 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   status?: boolean
   price?: boolean
   quantity?: boolean
+  originalQuantity?: boolean
+  leverage?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["order"]>
 
 export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -486,7 +570,10 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   status?: boolean
   price?: boolean
   quantity?: boolean
+  originalQuantity?: boolean
+  leverage?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["order"]>
 
 export type OrderSelectScalar = {
@@ -498,10 +585,13 @@ export type OrderSelectScalar = {
   status?: boolean
   price?: boolean
   quantity?: boolean
+  originalQuantity?: boolean
+  leverage?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "market" | "side" | "type" | "status" | "price" | "quantity" | "createdAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "market" | "side" | "type" | "status" | "price" | "quantity" | "originalQuantity" | "leverage" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 
 export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Order"
@@ -515,7 +605,10 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     status: string
     price: number | null
     quantity: number
+    originalQuantity: number
+    leverage: number
     createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["order"]>
   composites: {}
 }
@@ -947,7 +1040,10 @@ export interface OrderFieldRefs {
   readonly status: Prisma.FieldRef<"Order", 'String'>
   readonly price: Prisma.FieldRef<"Order", 'Float'>
   readonly quantity: Prisma.FieldRef<"Order", 'Float'>
+  readonly originalQuantity: Prisma.FieldRef<"Order", 'Float'>
+  readonly leverage: Prisma.FieldRef<"Order", 'Float'>
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Order", 'DateTime'>
 }
     
 
