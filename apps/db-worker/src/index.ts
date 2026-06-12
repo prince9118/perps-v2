@@ -87,6 +87,56 @@ async function processOrderUpdate(){
   }
 }
 
+async function updatePosition(params:{
+  userId:string;
+  market:string;
+  side:"long"|"short";
+  price:number;
+  quantity:number;
+  leverage:number;
+}){
+  const existingPosition=await prisma.position.findFirst({
+    where:{
+      userId:params.userId,
+      market:params.market,
+      side:params.side,
+      status:"open",
+    },
+  });
+  const margin=(params.price*params.quantity)/params.leverage;
+  if(!existingPosition){
+    await prisma.position.create({
+      data:{
+        userId:params.userId,
+        market:params.market,
+        side:params.side,
+        status:"open",
+        quantity:params.quantity,
+        entryPrice:params.price,
+        leverage:params.leverage,
+        margin,
+        pnl:0,
+      },
+    });
+    return;
+  }
+  const oldNotional=existingPosition.quantity*params.quantity;
+  const newNotional=params.price*params.quantity;
+  const newQuantity=existingPosition.quantity+params.quantity;
+  const newEntryPrice=(oldNotional+newNotional)/newQuantity;
+  await prisma.position.update({
+    where:{
+      id:existingPosition.id,
+    },
+    data:{
+      quantity:newQuantity,
+      entryPrice:newEntryPrice,
+      margin:existingPosition.margin+margin,
+    },
+  });
+
+}
+
 
 async function main(){
   console.log("DB Worker Started");
