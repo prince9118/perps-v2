@@ -19,6 +19,21 @@ app.get("/users",async(require,res)=>{
         users,
     });
 });
+// fucntion to return pnl
+function calculatePnl(position: any, currentPrice: number) {
+  if (position.side === "long") {
+    return (currentPrice - position.entryPrice) * position.quantity;
+  }
+
+  return (position.entryPrice - currentPrice) * position.quantity;
+}
+// helper function to retuen liquidation 
+function calculateLiquidationPrice(position:any){
+    if(position.side==="long"){
+        return position.entryPrice*(1-1/position.leverage);
+    }
+    return position.entryPrice*(1+1/position.leverage);
+}
 
 // signup api
 app.post("/auth/signup",async(req,res)=>{
@@ -166,6 +181,7 @@ app.post("/orders",authMiddleware,async(req:any,res)=>{
             status:"open",
             price:type==="limit"?price:null,
             quantity,
+            leverage,
             originalQuantity:quantity
         },
     });
@@ -240,6 +256,33 @@ app.get("/fills",authMiddleware,async(req:any,res)=>{
 
 });
 
+
+//positions
+app.get("/positions",authMiddleware,async(req:any,res)=>{
+    const currentPrice=Number(req.query.price);
+
+    const positions=await prisma.position.findMany({
+        where:{
+            userId:req.user.userId,
+            status:"open",
+        },
+        orderBy:{
+            createdAt:"desc",
+        },
+    });
+    const positionWithPnl=positions.map((position)=>{
+        const pnl=currentPrice?calculatePnl(position,currentPrice):position.pnl;
+        return{
+            ...position,
+            unrealizedPnl:pnl,
+            liquidationPrice:calculateLiquidationPrice(position),
+        };
+    });
+    res.json({
+        success:true,
+        positions:positionWithPnl,
+    });
+});
 
 app.listen(port,()=>{
     console.log(`Backend is Working on Port ${port}`);
