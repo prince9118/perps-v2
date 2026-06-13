@@ -67,6 +67,10 @@ export class OrderBook{
         }
     }
 
+    getSnapshot(){
+        
+    }
+
     matchOrders():{
         fills:EngineFill[];
         updatedOrders:EngineOrder[];
