@@ -75,6 +75,20 @@ async function main() {
           // const fills=book.matchOrders();
           const{fills,updatedOrders}=book.matchOrders();
           // console.log("fills:",fills);
+
+          //snapshpts 
+          const snapshot=book.getSnapshot();
+          await redis.xadd(
+            "orderbook_events",
+            "*",
+            "type",
+            "ORDERBOOK_UPDATE",
+            "data",
+            JSON.stringify({
+              market:order.market,
+              ...snapshot,
+            })
+          );
           for(const fill of fills){
             await redis.xadd(
               "trade_events",

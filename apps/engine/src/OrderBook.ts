@@ -68,7 +68,16 @@ export class OrderBook{
     }
 
     getSnapshot(){
-        
+        return {
+            bids:this.buyOrders.map((o)=>({
+                price:o.price,
+                quantity:o.quantity,
+            })),
+            asks:this.sellorders.map((p)=>({
+                price:p.price,
+                quantity:p.quantity,
+            })),
+        }
     }
 
     matchOrders():{
