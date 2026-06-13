@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "dev": "bun run src/index.ts"
+  },
+  "name": "@repo/ws",
+  "dependencies": {
+    "@repo/redis": "workspace:*",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1"
+  }
+}
