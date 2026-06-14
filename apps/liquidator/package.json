@@ -1,0 +1,13 @@
+{
+  "name": "liquidator",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@repo/db": "workspace:*",
+    "@repo/redis": "workspace:*",
+    "dotenv": "^17.4.2"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts"
+  }
+}

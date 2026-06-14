@@ -1,0 +1,19 @@
+{
+  "name": "funding-service",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "@repo/db": "workspace:*"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts"
+  }
+}

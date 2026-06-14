@@ -54,7 +54,10 @@ export const ModelName = {
   User: 'User',
   Order: 'Order',
   Fill: 'Fill',
-  Position: 'Position'
+  Position: 'Position',
+  InsuranceFund: 'InsuranceFund',
+  FundingRate: 'FundingRate',
+  FundingPayment: 'FundingPayment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -132,11 +135,45 @@ export const PositionScalarFieldEnum = {
   leverage: 'leverage',
   margin: 'margin',
   pnl: 'pnl',
+  riskScore: 'riskScore',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type PositionScalarFieldEnum = (typeof PositionScalarFieldEnum)[keyof typeof PositionScalarFieldEnum]
+
+
+export const InsuranceFundScalarFieldEnum = {
+  id: 'id',
+  market: 'market',
+  balance: 'balance',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InsuranceFundScalarFieldEnum = (typeof InsuranceFundScalarFieldEnum)[keyof typeof InsuranceFundScalarFieldEnum]
+
+
+export const FundingRateScalarFieldEnum = {
+  id: 'id',
+  market: 'market',
+  rate: 'rate',
+  createdAt: 'createdAt'
+} as const
+
+export type FundingRateScalarFieldEnum = (typeof FundingRateScalarFieldEnum)[keyof typeof FundingRateScalarFieldEnum]
+
+
+export const FundingPaymentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  market: 'market',
+  amount: 'amount',
+  side: 'side',
+  createdAt: 'createdAt'
+} as const
+
+export type FundingPaymentScalarFieldEnum = (typeof FundingPaymentScalarFieldEnum)[keyof typeof FundingPaymentScalarFieldEnum]
 
 
 export const SortOrder = {
