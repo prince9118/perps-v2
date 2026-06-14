@@ -307,7 +307,7 @@ app.get("/positions",authMiddleware,async(req:any,res)=>{
     const positionWithPnl=await Promise.all(
         positions.map(async(position)=>{
             const markPrice=Number(
-                await redis.get(`index_prie:${position.market}`)
+                await redis.get(`index_price:${position.market}`)
             );
             const pnl=calculatePnl(position,markPrice);
             return {
@@ -324,12 +324,11 @@ app.get("/positions",authMiddleware,async(req:any,res)=>{
     });
 });
 
-app.post("/position/close",authMiddleware,async(req:any,res)=>{
+app.post("/positions/close",authMiddleware,async(req:any,res)=>{
     const {positionId}=req.body;
-    const exitPrice=Number(req.query.price);
-    if(!positionId || !exitPrice){
+    if(!positionId){
         return res.status(400).json({
-            message:"PositionId and price required",
+            message:"PositionId is required",
         });
     }
     const position=await prisma.position.findFirst({
@@ -339,6 +338,18 @@ app.post("/position/close",authMiddleware,async(req:any,res)=>{
             status:"open",
         },
     });
+    if(!position){
+        return res.status(404).json({
+            message:"Position not found"
+        });
+    }
+    const exitPrice=Number(await redis.get(`index_price:${position.market}`));
+    if(!exitPrice){
+        return res.status(400).json({
+            message:"Market price unavailable",
+        });
+    }
+   
     if(!position){
         return res.status(404).json({
             message:"Position not found"

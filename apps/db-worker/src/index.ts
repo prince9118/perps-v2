@@ -179,7 +179,7 @@ async function updatePosition(params:{
     });
     return;
   }
-  const oldNotional=existingPosition.quantity*existingPosition.quantity;
+  const oldNotional=existingPosition.quantity*existingPosition.entryPrice;
   const newNotional=params.price*params.quantity;
   const newQuantity=existingPosition.quantity+params.quantity;
   const newEntryPrice=(oldNotional+newNotional)/newQuantity;
