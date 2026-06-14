@@ -1,6 +1,6 @@
 import {prisma} from "@repo/db";
 import { redis } from "@repo/redis";
-import { resolve } from "bun";
+
 import "dotenv/config";
 
 function calculateLiquidationPrice(position:any){
@@ -10,7 +10,9 @@ function calculateLiquidationPrice(position:any){
     return position.entryPrice*(1+1/position.leverage);
 }
 
+
 async function main(){
+    
     console.log("Liquidator Started");
 
     while(true){
@@ -94,6 +96,7 @@ async function main(){
                     timestamp:Date.now(),
                 })
             );
+            
             console.log("position liquidated:",position.id);
         }
         await new Promise((resolve)=>setTimeout(resolve,1000));
