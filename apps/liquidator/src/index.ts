@@ -61,6 +61,22 @@ async function main(){
                     },
                 },
             });
+            await prisma.positionHistory.create({
+                data: {
+                    userId: position.userId,
+                    market: position.market,
+                    side: position.side,
+                    quantity: position.quantity,
+                    entryPrice: position.entryPrice,
+                    exitPrice: markPrice,
+                    leverage: position.leverage,
+                    margin: position.margin,
+                    pnl: -position.margin,
+                    reason: "liquidated",
+                },
+            });
+
+
             await redis.xadd(
                 "liquidation_events",
                 "*",

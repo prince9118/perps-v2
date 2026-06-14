@@ -390,7 +390,9 @@ export const ModelName = {
   Position: 'Position',
   InsuranceFund: 'InsuranceFund',
   FundingRate: 'FundingRate',
-  FundingPayment: 'FundingPayment'
+  FundingPayment: 'FundingPayment',
+  FeeAccount: 'FeeAccount',
+  PositionHistory: 'PositionHistory'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -406,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "order" | "fill" | "position" | "insuranceFund" | "fundingRate" | "fundingPayment"
+    modelProps: "user" | "order" | "fill" | "position" | "insuranceFund" | "fundingRate" | "fundingPayment" | "feeAccount" | "positionHistory"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -928,6 +930,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FeeAccount: {
+      payload: Prisma.$FeeAccountPayload<ExtArgs>
+      fields: Prisma.FeeAccountFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FeeAccountFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeAccountPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FeeAccountFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeAccountPayload>
+        }
+        findFirst: {
+          args: Prisma.FeeAccountFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeAccountPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FeeAccountFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeAccountPayload>
+        }
+        findMany: {
+          args: Prisma.FeeAccountFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeAccountPayload>[]
+        }
+        create: {
+          args: Prisma.FeeAccountCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeAccountPayload>
+        }
+        createMany: {
+          args: Prisma.FeeAccountCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FeeAccountCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeAccountPayload>[]
+        }
+        delete: {
+          args: Prisma.FeeAccountDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeAccountPayload>
+        }
+        update: {
+          args: Prisma.FeeAccountUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeAccountPayload>
+        }
+        deleteMany: {
+          args: Prisma.FeeAccountDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FeeAccountUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FeeAccountUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeAccountPayload>[]
+        }
+        upsert: {
+          args: Prisma.FeeAccountUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeAccountPayload>
+        }
+        aggregate: {
+          args: Prisma.FeeAccountAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFeeAccount>
+        }
+        groupBy: {
+          args: Prisma.FeeAccountGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FeeAccountGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FeeAccountCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FeeAccountCountAggregateOutputType> | number
+        }
+      }
+    }
+    PositionHistory: {
+      payload: Prisma.$PositionHistoryPayload<ExtArgs>
+      fields: Prisma.PositionHistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PositionHistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PositionHistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PositionHistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PositionHistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.PositionHistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PositionHistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PositionHistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PositionHistoryPayload>
+        }
+        findMany: {
+          args: Prisma.PositionHistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PositionHistoryPayload>[]
+        }
+        create: {
+          args: Prisma.PositionHistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PositionHistoryPayload>
+        }
+        createMany: {
+          args: Prisma.PositionHistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PositionHistoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PositionHistoryPayload>[]
+        }
+        delete: {
+          args: Prisma.PositionHistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PositionHistoryPayload>
+        }
+        update: {
+          args: Prisma.PositionHistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PositionHistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.PositionHistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PositionHistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PositionHistoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PositionHistoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.PositionHistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PositionHistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.PositionHistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePositionHistory>
+        }
+        groupBy: {
+          args: Prisma.PositionHistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PositionHistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PositionHistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PositionHistoryCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1065,6 +1215,35 @@ export const FundingPaymentScalarFieldEnum = {
 } as const
 
 export type FundingPaymentScalarFieldEnum = (typeof FundingPaymentScalarFieldEnum)[keyof typeof FundingPaymentScalarFieldEnum]
+
+
+export const FeeAccountScalarFieldEnum = {
+  id: 'id',
+  market: 'market',
+  balance: 'balance',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FeeAccountScalarFieldEnum = (typeof FeeAccountScalarFieldEnum)[keyof typeof FeeAccountScalarFieldEnum]
+
+
+export const PositionHistoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  market: 'market',
+  side: 'side',
+  quantity: 'quantity',
+  entryPrice: 'entryPrice',
+  exitPrice: 'exitPrice',
+  leverage: 'leverage',
+  margin: 'margin',
+  pnl: 'pnl',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type PositionHistoryScalarFieldEnum = (typeof PositionHistoryScalarFieldEnum)[keyof typeof PositionHistoryScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1269,6 +1448,8 @@ export type GlobalOmitConfig = {
   insuranceFund?: Prisma.InsuranceFundOmit
   fundingRate?: Prisma.FundingRateOmit
   fundingPayment?: Prisma.FundingPaymentOmit
+  feeAccount?: Prisma.FeeAccountOmit
+  positionHistory?: Prisma.PositionHistoryOmit
 }
 
 /* Types for Logging */
