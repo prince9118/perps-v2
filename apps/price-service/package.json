@@ -1,0 +1,17 @@
+{
+  "name": "price-service",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },"dependencies": {
+    "@repo/redis": "workspace:*"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts"
+  }
+}

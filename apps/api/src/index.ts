@@ -27,6 +27,15 @@ function calculatePnl(position: any, currentPrice: number) {
 
   return (position.entryPrice - currentPrice) * position.quantity;
 }
+//helper function for the realized pnl
+function calculateRealizedPnl(position:any,exitPrice:number){
+    if(position.side==="long"){
+        return (exitPrice-position.entryPrice)*position.quantity;
+    }
+
+    return (position.entryPrice-exitPrice)*position.quantity;
+
+}
 // helper function to retuen liquidation 
 function calculateLiquidationPrice(position:any){
     if(position.side==="long"){
@@ -159,6 +168,8 @@ app.post("/test-order",async(req,res)=>{
     });
 });
 
+ 
+
 app.post("/orders",authMiddleware,async(req:any,res)=>{
     const {market,side,type,price,quantity,leverage}=req.body;
     if(!market || !side || !type || !quantity || !leverage){
@@ -283,6 +294,60 @@ app.get("/positions",authMiddleware,async(req:any,res)=>{
         positions:positionWithPnl,
     });
 });
+
+app.post("/position/close",authMiddleware,async(req:any,res)=>{
+    const {positionId}=req.body;
+    const exitPrice=Number(req.query.price);
+    if(!positionId || !exitPrice){
+        return res.status(400).json({
+            message:"PositionId and price required",
+        });
+    }
+    const position=await prisma.position.findFirst({
+        where:{
+            id:positionId,
+            userId:req.user.userId,
+            status:"open",
+        },
+    });
+    if(!position){
+        return res.status(404).json({
+            message:"Position not found"
+        })
+    }
+    const realizedPnl=calculateRealizedPnl(position,exitPrice);
+    const relesedMargin=position.margin;
+    await prisma.position.update({
+        where:{
+            id:position.id,
+        },
+        data:{
+            status:"closed",
+            pnl:realizedPnl,
+        },
+    });
+    await prisma.user.update({
+        where:{
+            id:req.user.userId,
+        },
+        data:{
+            balance:{
+                increment:relesedMargin+realizedPnl,
+
+            },
+            lockedBalance:{
+                decrement:relesedMargin,
+            },
+        },
+    });
+    res.json({
+        success:true,
+        message:"position closed",
+        realizedPnl,
+        relesedMargin,
+    });
+});
+
 
 app.listen(port,()=>{
     console.log(`Backend is Working on Port ${port}`);
