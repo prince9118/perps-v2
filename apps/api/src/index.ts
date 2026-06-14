@@ -369,6 +369,20 @@ app.post("/position/close",authMiddleware,async(req:any,res)=>{
             },
         },
     });
+    await prisma.positionHistory.create({
+    data: {
+        userId: position.userId,
+        market: position.market,
+        side: position.side,
+        quantity: position.quantity,
+        entryPrice: position.entryPrice,
+        exitPrice,
+        leverage: position.leverage,
+        margin: position.margin,
+        pnl: realizedPnl,
+        reason: "closed",
+    },
+    });
     res.json({
         success:true,
         message:"position closed",
@@ -458,6 +472,88 @@ app.delete("/orders/:id",authMiddleware,async(req:any,res)=>{
     });
 
 
+});
+//fee account 
+
+app.get("/fee-account", async (_req, res) => {
+  const accounts = await prisma.feeAccount.findMany();
+
+  res.json({
+    success: true,
+    accounts,
+  });
+});
+
+//position hostory
+app.get("/position-history",authMiddleware,async(req:any,res)=>{
+    const history=await prisma.positionHistory.findMany({
+        where:{
+            userId:req.user.userId,
+        },
+        orderBy:{
+            createdAt:"desc",
+        },
+    });
+    res.json({
+        success:true,
+        history,
+    });
+});
+
+//health market
+app.get("/price/:market",async(req,res)=>{
+    const market=req.params.market;
+    const price=await redis.get(`index_price:${market}`);
+    res.json({
+        success:true,
+        market,
+        price:Number(price),
+    });
+});
+
+//funding rate
+app.get("/funding-rate",async(req,res)=>{
+    const rates=await prisma.fundingRate.findMany({
+        orderBy:{
+            createdAt:"desc",
+        },
+    });
+    res.json({
+        success:true,
+        rates,
+    });
+});
+
+//insurance fund
+
+app.get("/insurance-fund",async(require,res)=>{
+    const funds=await prisma.insuranceFund.findMany();
+    res.json({
+        success:true,
+        funds,
+    });
+});
+
+//backend status 
+app.get("/backend-staus",async(req,res)=>{
+    const users=await prisma.user.count();
+    const orders=await prisma.order.count();
+    const fills=await prisma.fill.count();
+    const positions=await prisma.position.count();
+    res.json({
+        success:true,
+        services:{
+            api:"running",
+            postgres:"connected",
+            redis:"connected",
+        },
+        counts:{
+            users,
+            orders,
+            fills,
+            positions,
+        },
+    });
 });
 
 app.listen(port,()=>{

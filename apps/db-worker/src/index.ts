@@ -40,6 +40,21 @@ async function processTradeEvents(){
           const notional=fill.price*fill.quantity;
           const buyerFee=notional*FEE_RATE;
           const sellerFee=notional*FEE_RATE;
+          //Fee Account 
+          await prisma.feeAccount.upsert({
+            where: {
+              market: fill.market,
+            },
+            update: {
+              balance: {
+                increment: buyerFee + sellerFee,
+              },
+            },
+            create: {
+              market: fill.market,
+              balance: buyerFee + sellerFee,
+            },
+          });
           await prisma.fill.create({
               data:{
                   buyOrderId:fill.buyOrderId,

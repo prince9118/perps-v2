@@ -52,3 +52,13 @@ export type FundingRate = Prisma.FundingRateModel
  * 
  */
 export type FundingPayment = Prisma.FundingPaymentModel
+/**
+ * Model FeeAccount
+ * 
+ */
+export type FeeAccount = Prisma.FeeAccountModel
+/**
+ * Model PositionHistory
+ * 
+ */
+export type PositionHistory = Prisma.PositionHistoryModel

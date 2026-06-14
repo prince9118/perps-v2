@@ -57,7 +57,9 @@ export const ModelName = {
   Position: 'Position',
   InsuranceFund: 'InsuranceFund',
   FundingRate: 'FundingRate',
-  FundingPayment: 'FundingPayment'
+  FundingPayment: 'FundingPayment',
+  FeeAccount: 'FeeAccount',
+  PositionHistory: 'PositionHistory'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -174,6 +176,35 @@ export const FundingPaymentScalarFieldEnum = {
 } as const
 
 export type FundingPaymentScalarFieldEnum = (typeof FundingPaymentScalarFieldEnum)[keyof typeof FundingPaymentScalarFieldEnum]
+
+
+export const FeeAccountScalarFieldEnum = {
+  id: 'id',
+  market: 'market',
+  balance: 'balance',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FeeAccountScalarFieldEnum = (typeof FeeAccountScalarFieldEnum)[keyof typeof FeeAccountScalarFieldEnum]
+
+
+export const PositionHistoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  market: 'market',
+  side: 'side',
+  quantity: 'quantity',
+  entryPrice: 'entryPrice',
+  exitPrice: 'exitPrice',
+  leverage: 'leverage',
+  margin: 'margin',
+  pnl: 'pnl',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type PositionHistoryScalarFieldEnum = (typeof PositionHistoryScalarFieldEnum)[keyof typeof PositionHistoryScalarFieldEnum]
 
 
 export const SortOrder = {
