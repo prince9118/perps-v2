@@ -37,3 +37,18 @@ export type Fill = Prisma.FillModel
  * 
  */
 export type Position = Prisma.PositionModel
+/**
+ * Model InsuranceFund
+ * 
+ */
+export type InsuranceFund = Prisma.InsuranceFundModel
+/**
+ * Model FundingRate
+ * 
+ */
+export type FundingRate = Prisma.FundingRateModel
+/**
+ * Model FundingPayment
+ * 
+ */
+export type FundingPayment = Prisma.FundingPaymentModel

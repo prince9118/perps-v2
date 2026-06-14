@@ -32,6 +32,7 @@ export type PositionAvgAggregateOutputType = {
   leverage: number | null
   margin: number | null
   pnl: number | null
+  riskScore: number | null
 }
 
 export type PositionSumAggregateOutputType = {
@@ -40,6 +41,7 @@ export type PositionSumAggregateOutputType = {
   leverage: number | null
   margin: number | null
   pnl: number | null
+  riskScore: number | null
 }
 
 export type PositionMinAggregateOutputType = {
@@ -53,6 +55,7 @@ export type PositionMinAggregateOutputType = {
   leverage: number | null
   margin: number | null
   pnl: number | null
+  riskScore: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -68,6 +71,7 @@ export type PositionMaxAggregateOutputType = {
   leverage: number | null
   margin: number | null
   pnl: number | null
+  riskScore: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -83,6 +87,7 @@ export type PositionCountAggregateOutputType = {
   leverage: number
   margin: number
   pnl: number
+  riskScore: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -95,6 +100,7 @@ export type PositionAvgAggregateInputType = {
   leverage?: true
   margin?: true
   pnl?: true
+  riskScore?: true
 }
 
 export type PositionSumAggregateInputType = {
@@ -103,6 +109,7 @@ export type PositionSumAggregateInputType = {
   leverage?: true
   margin?: true
   pnl?: true
+  riskScore?: true
 }
 
 export type PositionMinAggregateInputType = {
@@ -116,6 +123,7 @@ export type PositionMinAggregateInputType = {
   leverage?: true
   margin?: true
   pnl?: true
+  riskScore?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -131,6 +139,7 @@ export type PositionMaxAggregateInputType = {
   leverage?: true
   margin?: true
   pnl?: true
+  riskScore?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -146,6 +155,7 @@ export type PositionCountAggregateInputType = {
   leverage?: true
   margin?: true
   pnl?: true
+  riskScore?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -248,6 +258,7 @@ export type PositionGroupByOutputType = {
   leverage: number
   margin: number
   pnl: number
+  riskScore: number
   createdAt: Date
   updatedAt: Date
   _count: PositionCountAggregateOutputType | null
@@ -286,6 +297,7 @@ export type PositionWhereInput = {
   leverage?: Prisma.FloatFilter<"Position"> | number
   margin?: Prisma.FloatFilter<"Position"> | number
   pnl?: Prisma.FloatFilter<"Position"> | number
+  riskScore?: Prisma.FloatFilter<"Position"> | number
   createdAt?: Prisma.DateTimeFilter<"Position"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Position"> | Date | string
 }
@@ -301,6 +313,7 @@ export type PositionOrderByWithRelationInput = {
   leverage?: Prisma.SortOrder
   margin?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  riskScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -319,6 +332,7 @@ export type PositionWhereUniqueInput = Prisma.AtLeast<{
   leverage?: Prisma.FloatFilter<"Position"> | number
   margin?: Prisma.FloatFilter<"Position"> | number
   pnl?: Prisma.FloatFilter<"Position"> | number
+  riskScore?: Prisma.FloatFilter<"Position"> | number
   createdAt?: Prisma.DateTimeFilter<"Position"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Position"> | Date | string
 }, "id">
@@ -334,6 +348,7 @@ export type PositionOrderByWithAggregationInput = {
   leverage?: Prisma.SortOrder
   margin?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  riskScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PositionCountOrderByAggregateInput
@@ -357,6 +372,7 @@ export type PositionScalarWhereWithAggregatesInput = {
   leverage?: Prisma.FloatWithAggregatesFilter<"Position"> | number
   margin?: Prisma.FloatWithAggregatesFilter<"Position"> | number
   pnl?: Prisma.FloatWithAggregatesFilter<"Position"> | number
+  riskScore?: Prisma.FloatWithAggregatesFilter<"Position"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Position"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Position"> | Date | string
 }
@@ -372,6 +388,7 @@ export type PositionCreateInput = {
   leverage: number
   margin: number
   pnl?: number
+  riskScore?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -387,6 +404,7 @@ export type PositionUncheckedCreateInput = {
   leverage: number
   margin: number
   pnl?: number
+  riskScore?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -402,6 +420,7 @@ export type PositionUpdateInput = {
   leverage?: Prisma.FloatFieldUpdateOperationsInput | number
   margin?: Prisma.FloatFieldUpdateOperationsInput | number
   pnl?: Prisma.FloatFieldUpdateOperationsInput | number
+  riskScore?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -417,6 +436,7 @@ export type PositionUncheckedUpdateInput = {
   leverage?: Prisma.FloatFieldUpdateOperationsInput | number
   margin?: Prisma.FloatFieldUpdateOperationsInput | number
   pnl?: Prisma.FloatFieldUpdateOperationsInput | number
+  riskScore?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -432,6 +452,7 @@ export type PositionCreateManyInput = {
   leverage: number
   margin: number
   pnl?: number
+  riskScore?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -447,6 +468,7 @@ export type PositionUpdateManyMutationInput = {
   leverage?: Prisma.FloatFieldUpdateOperationsInput | number
   margin?: Prisma.FloatFieldUpdateOperationsInput | number
   pnl?: Prisma.FloatFieldUpdateOperationsInput | number
+  riskScore?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -462,6 +484,7 @@ export type PositionUncheckedUpdateManyInput = {
   leverage?: Prisma.FloatFieldUpdateOperationsInput | number
   margin?: Prisma.FloatFieldUpdateOperationsInput | number
   pnl?: Prisma.FloatFieldUpdateOperationsInput | number
+  riskScore?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -477,6 +500,7 @@ export type PositionCountOrderByAggregateInput = {
   leverage?: Prisma.SortOrder
   margin?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  riskScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -487,6 +511,7 @@ export type PositionAvgOrderByAggregateInput = {
   leverage?: Prisma.SortOrder
   margin?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  riskScore?: Prisma.SortOrder
 }
 
 export type PositionMaxOrderByAggregateInput = {
@@ -500,6 +525,7 @@ export type PositionMaxOrderByAggregateInput = {
   leverage?: Prisma.SortOrder
   margin?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  riskScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -515,6 +541,7 @@ export type PositionMinOrderByAggregateInput = {
   leverage?: Prisma.SortOrder
   margin?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  riskScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -525,6 +552,7 @@ export type PositionSumOrderByAggregateInput = {
   leverage?: Prisma.SortOrder
   margin?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  riskScore?: Prisma.SortOrder
 }
 
 
@@ -540,6 +568,7 @@ export type PositionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   leverage?: boolean
   margin?: boolean
   pnl?: boolean
+  riskScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["position"]>
@@ -555,6 +584,7 @@ export type PositionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   leverage?: boolean
   margin?: boolean
   pnl?: boolean
+  riskScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["position"]>
@@ -570,6 +600,7 @@ export type PositionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   leverage?: boolean
   margin?: boolean
   pnl?: boolean
+  riskScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["position"]>
@@ -585,11 +616,12 @@ export type PositionSelectScalar = {
   leverage?: boolean
   margin?: boolean
   pnl?: boolean
+  riskScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PositionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "market" | "side" | "status" | "quantity" | "entryPrice" | "leverage" | "margin" | "pnl" | "createdAt" | "updatedAt", ExtArgs["result"]["position"]>
+export type PositionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "market" | "side" | "status" | "quantity" | "entryPrice" | "leverage" | "margin" | "pnl" | "riskScore" | "createdAt" | "updatedAt", ExtArgs["result"]["position"]>
 
 export type $PositionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Position"
@@ -605,6 +637,7 @@ export type $PositionPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     leverage: number
     margin: number
     pnl: number
+    riskScore: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["position"]>
@@ -1040,6 +1073,7 @@ export interface PositionFieldRefs {
   readonly leverage: Prisma.FieldRef<"Position", 'Float'>
   readonly margin: Prisma.FieldRef<"Position", 'Float'>
   readonly pnl: Prisma.FieldRef<"Position", 'Float'>
+  readonly riskScore: Prisma.FieldRef<"Position", 'Float'>
   readonly createdAt: Prisma.FieldRef<"Position", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Position", 'DateTime'>
 }

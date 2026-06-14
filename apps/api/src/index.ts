@@ -43,6 +43,12 @@ function calculateLiquidationPrice(position:any){
     }
     return position.entryPrice*(1+1/position.leverage);
 }
+//healper function for calculate risk score
+function calculateRiskScore(position: any, markPrice: number) {
+  const pnl = calculatePnl(position, markPrice);
+
+  return Math.abs(pnl) / position.margin;
+}
 
 // signup api
 app.post("/auth/signup",async(req,res)=>{
@@ -270,7 +276,10 @@ app.get("/fills",authMiddleware,async(req:any,res)=>{
 
 //positions
 app.get("/positions",authMiddleware,async(req:any,res)=>{
-    const currentPrice=Number(req.query.price);
+    // const currentPrice=Number(req.query.price);
+    // const currentPrice=Number(
+    //     await redis.get(`index_price:${positions.market}`)
+    // )
 
     const positions=await prisma.position.findMany({
         where:{
@@ -281,14 +290,34 @@ app.get("/positions",authMiddleware,async(req:any,res)=>{
             createdAt:"desc",
         },
     });
-    const positionWithPnl=positions.map((position)=>{
-        const pnl=currentPrice?calculatePnl(position,currentPrice):position.pnl;
-        return{
-            ...position,
-            unrealizedPnl:pnl,
-            liquidationPrice:calculateLiquidationPrice(position),
-        };
-    });
+
+    // const positionWithPnl=positions.map(async(position)=>{
+    //     const currentPrice=Number(
+    //         await redis.get(`index_price:${position.market}`)
+    //     );
+    //     // const pnl=currentPrice?calculatePnl(position,currentPrice):position.pnl;
+    //     const pnl=calculatePnl(position,currentPrice);
+    //     return{
+    //         ...position,
+    //         marketPrice:currentPrice,
+    //         unrealizedPnl:pnl,
+    //         liquidationPrice:calculateLiquidationPrice(position),
+    //     };
+    // });
+    const positionWithPnl=await Promise.all(
+        positions.map(async(position)=>{
+            const markPrice=Number(
+                await redis.get(`index_prie:${position.market}`)
+            );
+            const pnl=calculatePnl(position,markPrice);
+            return {
+                ...position,
+                markPrice,
+                unrealizedPnl:pnl,
+                liquidationPrice:calculateLiquidationPrice(position),
+            };
+        })
+    );
     res.json({
         success:true,
         positions:positionWithPnl,
@@ -348,6 +377,88 @@ app.post("/position/close",authMiddleware,async(req:any,res)=>{
     });
 });
 
+
+//ADL(auto )
+app.get("/adl/ranking",authMiddleware,async (_req,res)=>{
+    const positions=await prisma.position.findMany({
+        where:{
+            status:"open",
+        },
+    });
+    const ranked=await Promise.all(
+        positions.map(async(position)=>{
+            const markPrice=Number(
+                await redis.get(`index_price:${position.market}`)
+            );
+            return{
+                positionId:position.id,
+                userid:position.userId,
+                market:position.market,
+                side:position.side,
+                margin:position.margin,
+                markPrice,
+                riskScore:calculateRiskScore(position,markPrice),
+            };
+        })
+    );
+    ranked.sort((a,b)=>b.riskScore-a.riskScore);
+    res.json({
+        success:true,
+        ranked,
+    });
+});
+
+
+//cancel order
+
+app.delete("/orders/:id",authMiddleware,async(req:any,res)=>{
+    const orderId=req.params.id;
+    const order=await prisma.order.findFirst({
+        where:{
+            id:orderId,
+            userId:req.user.userId,
+        },
+    });
+    if(!order){
+        return res.status(404).json({
+            message:"Order not found",
+        });
+    }
+    if(
+        order.status==="filled" || order.status==="cancelled"
+    ){
+        return res.status(400).json({
+            message:"order can not cancell"
+        });
+    }
+    await prisma.order.update({
+        where:{
+            id:order.id,
+        },
+        data:{
+            status:"cancelled",
+
+        },
+    });
+    await redis.xadd(
+        "order_cancel_events",
+        "*",
+        "type",
+        "ORDER_CANCELLED",
+        "data",
+        JSON.stringify({
+            orderId:order.id,
+            market:order.market,
+            timestamp:Date.now(),
+        })
+    );
+    res.json({
+        success:true,
+        message:"Order Cancelled",
+    });
+
+
+});
 
 app.listen(port,()=>{
     console.log(`Backend is Working on Port ${port}`);

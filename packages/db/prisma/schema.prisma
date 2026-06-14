@@ -59,7 +59,51 @@ model Position {
   leverage  Float 
   margin    Float
   pnl      Float @default(0)
-  
+  riskScore  Float @default(0)
   createdAt  DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+model InsuranceFund{
+  id       String   @id@default(uuid())
+  market   String   @unique
+  balance  Float    @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FundingRate{
+  id   String   @id@default(uuid())
+  market  String 
+  rate   Float
+  createdAt  DateTime @default(now())
+}
+
+model FundingPayment{
+  id String @id@default(uuid())
+  userId  String
+  market  String
+  amount  Float
+  side  String 
+  createdAt DateTime @default(now())
+}
+model FeeAccount{
+  id   String @id@default(uuid())
+  market String @unique
+  balance Float @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt  DateTime @updatedAt
+}
+model PositionHistory{
+  id     String    @id@default(uuid())
+  userId   String
+  market   String
+  side    String
+  quantity Float 
+  entryPrice Float
+  exitPrice   Float?
+  leverage   Float 
+  margin   Float 
+  pnl    Float 
+  reason    String
+  createdAt DateTime  @default(now())
 }

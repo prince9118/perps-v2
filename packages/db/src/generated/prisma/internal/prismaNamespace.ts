@@ -387,7 +387,10 @@ export const ModelName = {
   User: 'User',
   Order: 'Order',
   Fill: 'Fill',
-  Position: 'Position'
+  Position: 'Position',
+  InsuranceFund: 'InsuranceFund',
+  FundingRate: 'FundingRate',
+  FundingPayment: 'FundingPayment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -403,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "order" | "fill" | "position"
+    modelProps: "user" | "order" | "fill" | "position" | "insuranceFund" | "fundingRate" | "fundingPayment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -703,6 +706,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    InsuranceFund: {
+      payload: Prisma.$InsuranceFundPayload<ExtArgs>
+      fields: Prisma.InsuranceFundFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InsuranceFundFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InsuranceFundPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InsuranceFundFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InsuranceFundPayload>
+        }
+        findFirst: {
+          args: Prisma.InsuranceFundFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InsuranceFundPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InsuranceFundFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InsuranceFundPayload>
+        }
+        findMany: {
+          args: Prisma.InsuranceFundFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InsuranceFundPayload>[]
+        }
+        create: {
+          args: Prisma.InsuranceFundCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InsuranceFundPayload>
+        }
+        createMany: {
+          args: Prisma.InsuranceFundCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InsuranceFundCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InsuranceFundPayload>[]
+        }
+        delete: {
+          args: Prisma.InsuranceFundDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InsuranceFundPayload>
+        }
+        update: {
+          args: Prisma.InsuranceFundUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InsuranceFundPayload>
+        }
+        deleteMany: {
+          args: Prisma.InsuranceFundDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InsuranceFundUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InsuranceFundUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InsuranceFundPayload>[]
+        }
+        upsert: {
+          args: Prisma.InsuranceFundUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InsuranceFundPayload>
+        }
+        aggregate: {
+          args: Prisma.InsuranceFundAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInsuranceFund>
+        }
+        groupBy: {
+          args: Prisma.InsuranceFundGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InsuranceFundGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InsuranceFundCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InsuranceFundCountAggregateOutputType> | number
+        }
+      }
+    }
+    FundingRate: {
+      payload: Prisma.$FundingRatePayload<ExtArgs>
+      fields: Prisma.FundingRateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FundingRateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingRatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FundingRateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingRatePayload>
+        }
+        findFirst: {
+          args: Prisma.FundingRateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingRatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FundingRateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingRatePayload>
+        }
+        findMany: {
+          args: Prisma.FundingRateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingRatePayload>[]
+        }
+        create: {
+          args: Prisma.FundingRateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingRatePayload>
+        }
+        createMany: {
+          args: Prisma.FundingRateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FundingRateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingRatePayload>[]
+        }
+        delete: {
+          args: Prisma.FundingRateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingRatePayload>
+        }
+        update: {
+          args: Prisma.FundingRateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingRatePayload>
+        }
+        deleteMany: {
+          args: Prisma.FundingRateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FundingRateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FundingRateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingRatePayload>[]
+        }
+        upsert: {
+          args: Prisma.FundingRateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingRatePayload>
+        }
+        aggregate: {
+          args: Prisma.FundingRateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFundingRate>
+        }
+        groupBy: {
+          args: Prisma.FundingRateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FundingRateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FundingRateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FundingRateCountAggregateOutputType> | number
+        }
+      }
+    }
+    FundingPayment: {
+      payload: Prisma.$FundingPaymentPayload<ExtArgs>
+      fields: Prisma.FundingPaymentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FundingPaymentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingPaymentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FundingPaymentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingPaymentPayload>
+        }
+        findFirst: {
+          args: Prisma.FundingPaymentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingPaymentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FundingPaymentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingPaymentPayload>
+        }
+        findMany: {
+          args: Prisma.FundingPaymentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingPaymentPayload>[]
+        }
+        create: {
+          args: Prisma.FundingPaymentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingPaymentPayload>
+        }
+        createMany: {
+          args: Prisma.FundingPaymentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FundingPaymentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingPaymentPayload>[]
+        }
+        delete: {
+          args: Prisma.FundingPaymentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingPaymentPayload>
+        }
+        update: {
+          args: Prisma.FundingPaymentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingPaymentPayload>
+        }
+        deleteMany: {
+          args: Prisma.FundingPaymentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FundingPaymentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FundingPaymentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingPaymentPayload>[]
+        }
+        upsert: {
+          args: Prisma.FundingPaymentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FundingPaymentPayload>
+        }
+        aggregate: {
+          args: Prisma.FundingPaymentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFundingPayment>
+        }
+        groupBy: {
+          args: Prisma.FundingPaymentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FundingPaymentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FundingPaymentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FundingPaymentCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -801,11 +1026,45 @@ export const PositionScalarFieldEnum = {
   leverage: 'leverage',
   margin: 'margin',
   pnl: 'pnl',
+  riskScore: 'riskScore',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type PositionScalarFieldEnum = (typeof PositionScalarFieldEnum)[keyof typeof PositionScalarFieldEnum]
+
+
+export const InsuranceFundScalarFieldEnum = {
+  id: 'id',
+  market: 'market',
+  balance: 'balance',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InsuranceFundScalarFieldEnum = (typeof InsuranceFundScalarFieldEnum)[keyof typeof InsuranceFundScalarFieldEnum]
+
+
+export const FundingRateScalarFieldEnum = {
+  id: 'id',
+  market: 'market',
+  rate: 'rate',
+  createdAt: 'createdAt'
+} as const
+
+export type FundingRateScalarFieldEnum = (typeof FundingRateScalarFieldEnum)[keyof typeof FundingRateScalarFieldEnum]
+
+
+export const FundingPaymentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  market: 'market',
+  amount: 'amount',
+  side: 'side',
+  createdAt: 'createdAt'
+} as const
+
+export type FundingPaymentScalarFieldEnum = (typeof FundingPaymentScalarFieldEnum)[keyof typeof FundingPaymentScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1007,6 +1266,9 @@ export type GlobalOmitConfig = {
   order?: Prisma.OrderOmit
   fill?: Prisma.FillOmit
   position?: Prisma.PositionOmit
+  insuranceFund?: Prisma.InsuranceFundOmit
+  fundingRate?: Prisma.FundingRateOmit
+  fundingPayment?: Prisma.FundingPaymentOmit
 }
 
 /* Types for Logging */
