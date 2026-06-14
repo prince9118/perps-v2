@@ -782,6 +782,8 @@ export const FillScalarFieldEnum = {
   market: 'market',
   price: 'price',
   quantity: 'quantity',
+  buyerFee: 'buyerFee',
+  sellerFee: 'sellerFee',
   createdAt: 'createdAt'
 } as const
 

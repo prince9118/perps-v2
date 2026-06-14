@@ -41,6 +41,8 @@ model Fill{
   market     String
   price    Float
   quantity  Float 
+  buyerFee  Float @default(0)
+  sellerFee Float @default(0)
   createdAt   DateTime @default(now())
 }
 

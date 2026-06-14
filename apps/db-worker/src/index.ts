@@ -35,6 +35,11 @@ async function processTradeEvents(){
         };
         if(event.type==="TRADE_CREATED"){
           const fill=event.data;
+          //commision fee
+          const  FEE_RATE=0.0005;
+          const notional=fill.price*fill.quantity;
+          const buyerFee=notional*FEE_RATE;
+          const sellerFee=notional*FEE_RATE;
           await prisma.fill.create({
               data:{
                   buyOrderId:fill.buyOrderId,
@@ -44,6 +49,8 @@ async function processTradeEvents(){
                   market:fill.market,
                   price:fill.price,
                   quantity:fill.quantity,
+                  buyerFee,
+                  sellerFee,
               },
           });
           // buyer get the long position
@@ -63,6 +70,25 @@ async function processTradeEvents(){
             price:fill.price,
             quantity:fill.quantity,
             leverage:fill.sellerLeverage
+          });
+          //updating the margin  with commision fee
+          await prisma.user.update({
+            where:{
+              id:fill.buyerId,
+            },
+            data:{
+              balance:{
+                decrement:buyerFee,
+              },
+            },
+          });
+          await prisma.user.update({
+            where:{id:fill.sellerId},
+            data:{
+              balance:{
+                decrement:sellerFee,
+              },
+            },
           });
           console.log("Fill saved to DB",fill);
         }

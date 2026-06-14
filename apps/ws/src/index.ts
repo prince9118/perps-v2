@@ -56,7 +56,48 @@ async function listenTradeEvents() {
     }
   }
 }
+async function listenOrderbookEvents() {
+  let lastId = "$";
+
+  while (true) {
+    const result = await redis.xread(
+      "BLOCK",
+      0,
+      "STREAMS",
+      "orderbook_events",
+      lastId
+    );
+
+    if (!result) continue;
+
+    const [streamName, messages] = result[0]!;
+
+    for (const [messageId, fields] of messages) {
+      const dataIndex = fields.indexOf("data");
+
+      if (dataIndex === -1) continue;
+
+      const orderbook = JSON.parse(fields[dataIndex + 1]!);
+
+      for (const client of wss.clients) {
+        if (client.readyState === 1) {
+          client.send(
+            JSON.stringify({
+              type: "ORDERBOOK_UPDATE",
+              data: orderbook,
+            })
+          );
+        }
+      }
+
+      console.log("Broadcasted trade:", orderbook);
+
+      lastId = messageId;
+    }
+  }
+}
 
 listenTradeEvents();
+listenOrderbookEvents();
 
 console.log("WebSocket server running on port 8080");
