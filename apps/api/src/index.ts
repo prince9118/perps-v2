@@ -566,6 +566,16 @@ app.get("/backend-staus",async(req,res)=>{
         },
     });
 });
+const SUPPORTED_MARKETS = [
+  { market: "BTC-PERP", symbol: "BTCUSDT", baseAsset: "BTC" },
+  { market: "ETH-PERP", symbol: "ETHUSDT", baseAsset: "ETH" },
+  { market: "SOL-PERP", symbol: "SOLUSDT", baseAsset: "SOL" },
+];
+
+app.get("/markets", (req, res) => {
+  res.json({ success: true, markets: SUPPORTED_MARKETS });
+});
+
 
 app.listen(port,()=>{
     console.log(`Backend is Working on Port ${port}`);
