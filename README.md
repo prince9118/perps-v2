@@ -164,11 +164,4 @@ Visit [http://localhost:3000](http://localhost:3000) → auto-redirects to the B
 
 ---
 
-## Roadmap
 
-- [ ] Liquidation engine (auto-close underwater positions)
-- [ ] Auto-Deleveraging (ADL) system
-- [ ] Funding rate settlement (periodic payments)
-- [ ] Market order matching (fill at best available price)
-- [ ] Portfolio margin mode
-- [ ] Deploy to Railway + Vercel
