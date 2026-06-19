@@ -123,14 +123,7 @@ bunx prisma migrate dev
 cd ../..
 ```
 
-### Environment Variables
 
-**`apps/api/.env`**
-```env
-PORT=3001
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/perps"
-JWT_SECRET="your-secret-key"
-```
 
 **`apps/ws/.env`** — none required (Redis defaults to localhost:6379)
 
