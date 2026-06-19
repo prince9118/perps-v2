@@ -1,8 +1,9 @@
 import Navbar from "@/components/Navbar";
-import Orderbook from "@/components/Orderbook";
+import LeftPanel from "@/components/LeftPanel";
 import OrderForm from "@/components/OrderForm";
 import Positions from "@/components/Positions";
-import PriceBar from "../../../components/PriceBar";
+import PriceBar from "@/components/PriceBar";
+import Chart from "@/components/Chart";
 
 export default async function TradePage({
   params,
@@ -12,25 +13,25 @@ export default async function TradePage({
   const { market } = await params;
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden bg-bg">
       <Navbar activeMarket={market} />
       <PriceBar market={market} />
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className="w-64 shrink-0 border-r border-gray-800 overflow-y-auto">
-          <Orderbook market={market} />
+      <div className="flex flex-1 overflow-hidden min-h-0">
+        <div className="w-56 shrink-0 border-r border-line overflow-hidden flex flex-col">
+          <LeftPanel market={market} />
         </div>
 
-        <div className="flex-1 border-r border-gray-800 flex items-center justify-center text-gray-600 text-sm">
-          Chart coming soon
+        <div className="flex-1 overflow-hidden min-w-0">
+          <Chart market={market} />
         </div>
 
-        <div className="w-72 shrink-0 overflow-y-auto">
+        <div className="w-[268px] shrink-0 overflow-y-auto">
           <OrderForm market={market} />
         </div>
       </div>
 
-      <div className="h-48 shrink-0 border-t border-gray-800 overflow-y-auto">
+      <div className="h-44 shrink-0 overflow-hidden">
         <Positions market={market} />
       </div>
     </div>

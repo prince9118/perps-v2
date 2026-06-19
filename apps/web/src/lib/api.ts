@@ -15,7 +15,7 @@ api.interceptors.request.use((config) => {
 
 export const authApi = {
   login: (email: string, password: string) =>
-    api.get("/auth/login", { params: { email, password } }),
+    api.post("/auth/login", { email, password }),
 
   signup: (email: string, password: string) =>
     api.post("/auth/signup", { email, password }),
@@ -37,7 +37,7 @@ export const orderApi = {
     price: number;
     quantity: number;
     leverage: number;
-    orderType: "limit" | "market";
+    type: "limit" | "market";
   }) => api.post("/orders", order),
 
   getOrders: () => api.get("/orders"),
@@ -46,7 +46,9 @@ export const orderApi = {
 
 export const positionApi = {
   getPositions: () => api.get("/positions"),
-  closePosition: (market: string) =>
-    api.post("/positions/close", { market }),
+  closePosition: (positionId: string) =>
+    api.post("/positions/close", { positionId }),
+  getHistory: () => api.get("/position-history"),
+  getFills: () => api.get("/fills"),
 };
 

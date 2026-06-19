@@ -5,6 +5,7 @@ interface User {
   id: string;
   email: string;
   balance: number;
+  lockedBalance: number;
 }
 
 interface AuthStore {
