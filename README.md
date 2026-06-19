@@ -1,135 +1,181 @@
 # Perps V2
 
-A high-performance perpetual futures exchange built from scratch to learn exchange architecture, matching engines, order management, positions, margin systems, and distributed backend design.
+A full-stack perpetual futures exchange built from scratch — matching engine, real-time orderbook, live PnL, WebSocket data feed, and a modern trading UI inspired by Hyperliquid and dYdX.
 
-## Overview
+Built as a deep learning project to understand every layer of a real exchange: from order matching to margin systems to live market data.
 
-Perps V2 is a learning-focused project that aims to replicate the core components of a modern perpetual futures exchange such as Binance Futures, Hyperliquid, Bybit, and dYdX.
+---
 
-The project is being built step-by-step with a strong focus on understanding:
+## Live Features
 
-* Matching Engine
-* Order Book Management
-* User Balances
-* Margin System
-* Positions
-* Liquidation Engine
-* Risk Management
-* Real-time Market Data
-* Event-Driven Architecture
+### Trading
+- Limit and market orders with leverage (1–50×)
+- Real-time orderbook via WebSocket (bids/asks with depth bars)
+- Live recent trades feed
+- TradingView chart with real Binance price data
+- Mark price, funding rate, insurance fund stats in the price bar
+
+### Positions & Risk
+- Open positions with live unrealized PnL
+- One-click close position (settles at mark price)
+- Close all positions at once
+- Liquidation price estimation per position
+- Locked margin tracking
+
+### Order Management
+- Open orders tab with live cancel
+- Trade history (closed positions with realized PnL)
+- Fills tab (matched executions with buy/sell side)
+
+### Account
+- JWT authentication (signup / login)
+- Available and locked balance in the navbar
+- Balance auto-refreshes after every order and close
+
+### Infrastructure
+- Backend health indicator (live green dot in navbar)
+- WebSocket on-connect snapshot (orderbook loads instantly on refresh)
+- Query invalidation after mutations (instant UI updates, no polling lag)
+
+---
 
 ## Tech Stack
 
-### Backend
+| Layer | Tech |
+|---|---|
+| Frontend | Next.js 15 (App Router), React, Tailwind CSS 4, TanStack Query v5 |
+| State | Zustand (auth + balance) |
+| Real-time | WebSocket server (ws library), Redis Streams |
+| API | Express.js, JWT auth, Zod validation |
+| Matching Engine | Custom price-time priority engine |
+| Database | PostgreSQL + Prisma ORM |
+| Cache / Pub-Sub | Redis (ioredis), Redis Streams (XREAD / XREVRANGE) |
+| Runtime | Bun |
+| Monorepo | Turborepo |
 
-* TypeScript
-* Bun
-* Express.js
-* PostgreSQL
-* Prisma ORM
-* Redis
+---
 
-### Infrastructure
+## Architecture
 
-* Docker
-* Docker Compose
-* Turborepo
+```
+Browser
+  │
+  ├── HTTP → apps/api (Express, port 3001)
+  └── WS  → apps/ws  (WebSocket, port 8080)
+                │
+                └── Redis Streams
+                        │
+                        └── apps/engine (Matching Engine)
+                                │
+                                └── PostgreSQL (via Prisma)
+```
+
+**Key design decision — Redis Streams:**  
+Orders flow from the API → Redis Stream → Engine. The engine publishes orderbook and trade events back to Redis Streams. The WebSocket server reads those streams and broadcasts to all connected clients. Each blocking `XREAD` listener uses its own dedicated Redis connection to avoid blocking other commands.
+
+---
 
 ## Monorepo Structure
 
-```text
+```
 perps-v2/
-│
 ├── apps/
-│   ├── api/
-│   └── engine/
+│   ├── api/          Express REST API (auth, orders, positions, fills)
+│   ├── engine/       Matching engine (price-time priority, partial fills)
+│   ├── web/          Next.js 15 frontend (trading UI)
+│   └── ws/           WebSocket server (live orderbook + trades)
 │
 ├── packages/
-│   ├── db/
-│   ├── common/
-│   └── types/
+│   ├── db/           Prisma schema + migrations
+│   └── redis/        Shared Redis client factory
 │
 ├── docker-compose.yml
 ├── turbo.json
 └── package.json
 ```
 
-## Features
-
-### User Management
-
-* User registration
-* User authentication
-* Balance management
-* Margin tracking
-
-### Order Management
-
-* Limit Orders
-* Market Orders
-* Order Cancellation
-* Order Status Tracking
-
-### Matching Engine
-
-* Price-Time Priority
-* Partial Fills
-* Full Fills
-* Fill Generation
-* Self Trade Prevention
-
-### Position Management
-
-* Long Positions
-* Short Positions
-* Average Entry Price
-* Unrealized PnL
-
-### Risk Management
-
-* Margin Validation
-* Position Monitoring
-* Liquidation Framework
-
-
+---
 
 ## Local Development
 
-### Clone Repository
+### Prerequisites
+
+- [Bun](https://bun.sh) v1.0+
+- [Docker](https://docker.com) (for PostgreSQL + Redis)
+
+### Setup
 
 ```bash
+# Clone
 git clone https://github.com/prince9118/perps-v2.git
 cd perps-v2
-```
 
-### Install Dependencies
-
-```bash
+# Install dependencies
 bun install
-```
 
-### Start PostgreSQL
-
-```bash
+# Start PostgreSQL and Redis
 docker compose up -d
-```
 
-### Generate Prisma Client
-
-```bash
+# Generate Prisma client and run migrations
 cd packages/db
 bunx prisma generate
-```
-
-### Run Migrations
-
-```bash
 bunx prisma migrate dev
+cd ../..
 ```
 
-### Start Development Server
+### Environment Variables
+
+**`apps/api/.env`**
+```env
+PORT=3001
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/perps"
+JWT_SECRET="your-secret-key"
+```
+
+**`apps/ws/.env`** — none required (Redis defaults to localhost:6379)
+
+**`apps/web/.env.local`** — none required for local dev (API and WS URLs are hardcoded to localhost)
+
+### Run All Services
+
+Open four terminals:
 
 ```bash
-bun run dev
+# Terminal 1 — API
+cd apps/api && bun run dev
+
+# Terminal 2 — Matching Engine
+cd apps/engine && bun run dev
+
+# Terminal 3 — WebSocket Server
+cd apps/ws && bun run dev
+
+# Terminal 4 — Frontend
+cd apps/web && bun run dev
 ```
 
+Visit [http://localhost:3000](http://localhost:3000) → auto-redirects to the BTC-PERP trading page.
+
+---
+
+## What I Learned Building This
+
+- **Matching engine internals** — price-time priority, partial fills, self-trade prevention
+- **Redis Streams** — event-driven architecture with `XADD` / `XREAD BLOCK 0` / `XREVRANGE`
+- **WebSocket patterns** — on-connect snapshot, dedicated connections per blocking listener, broadcast to all clients
+- **Margin systems** — locked balance, unrealized vs realized PnL, liquidation price calculation
+- **Next.js 15 App Router** — async params, Server vs Client components, streaming
+- **TanStack Query v5** — query invalidation after mutations, refetch intervals, enabled conditions
+- **Real-time UI** — orderbook depth bars, spread calculation, live trade feed
+- **Monorepo with Turborepo** — shared packages, workspace dependencies, parallel builds
+
+---
+
+## Roadmap
+
+- [ ] Liquidation engine (auto-close underwater positions)
+- [ ] Auto-Deleveraging (ADL) system
+- [ ] Funding rate settlement (periodic payments)
+- [ ] Market order matching (fill at best available price)
+- [ ] Portfolio margin mode
+- [ ] Deploy to Railway + Vercel
