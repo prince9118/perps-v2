@@ -29,7 +29,15 @@ export default function Navbar({ activeMarket }: { activeMarket?: string }) {
     retry: false,
   });
 
+  const { data: statusData } = useQuery({
+    queryKey: ["backend-status"],
+    queryFn: () => marketApi.getBackendStatus(),
+    refetchInterval: 30000,
+    retry: false,
+  });
+
   const markets: Market[] = data?.data?.markets ?? FALLBACK_MARKETS;
+  const isOnline = statusData?.data?.services?.api === "running";
 
   function handleLogout() {
     logout();
@@ -37,24 +45,43 @@ export default function Navbar({ activeMarket }: { activeMarket?: string }) {
   }
 
   return (
-    <nav className="h-12 border-b border-line flex items-center px-5 gap-6 shrink-0 bg-card">
-      <Link href="/" className="flex items-center gap-2 shrink-0">
-        <div className="w-6 h-6 rounded-md bg-accent flex items-center justify-center shadow-[0_0_12px_rgba(92,115,242,0.5)]">
+    <nav className="h-12 border-b border-line flex items-center px-5 gap-6 shrink-0 sticky top-0 z-50 glass">
+      {/* Logo */}
+      <Link href="/" className="flex items-center gap-2 shrink-0 group">
+        <div className="w-6 h-6 rounded-md bg-accent flex items-center justify-center shadow-[0_0_16px_rgba(92,115,242,0.6)] group-hover:shadow-[0_0_22px_rgba(92,115,242,0.8)] transition-shadow">
           <span className="text-white text-[10px] font-black tracking-tight">P</span>
         </div>
-        <span className="text-white font-bold text-sm tracking-widest">PERPS</span>
+        <span className="gradient-text font-bold text-sm tracking-widest">PERPS</span>
       </Link>
 
       <div className="w-px h-5 bg-line" />
 
+      {/* Backend status */}
+      <div
+        className="flex items-center gap-1.5 cursor-default"
+        title={isOnline ? "All systems operational" : "Checking backend..."}
+      >
+        <div
+          className={`w-1.5 h-1.5 rounded-full ${
+            isOnline ? "bg-buy animate-pulse-dot" : "bg-muted"
+          }`}
+        />
+        <span className={`text-[10px] font-medium ${isOnline ? "text-buy" : "text-muted"}`}>
+          {isOnline ? "Live" : "—"}
+        </span>
+      </div>
+
+      <div className="w-px h-5 bg-line" />
+
+      {/* Market links */}
       <div className="flex gap-0.5">
         {markets.map((m) => (
           <Link
             key={m.market}
             href={`/trade/${m.market}`}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-150 ${
               activeMarket === m.market
-                ? "bg-panel text-white shadow-inner"
+                ? "bg-accent-dim text-white border border-accent/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
                 : "text-dim hover:text-white hover:bg-panel/60"
             }`}
           >
@@ -64,10 +91,11 @@ export default function Navbar({ activeMarket }: { activeMarket?: string }) {
         ))}
       </div>
 
+      {/* Right side */}
       <div className="ml-auto flex items-center gap-3">
         {user ? (
           <>
-            <div className="flex items-center gap-3 bg-panel px-3 py-1.5 rounded-lg border border-line">
+            <div className="flex items-center gap-3 bg-panel/60 px-3 py-1.5 rounded-lg border border-line/60 backdrop-blur-sm">
               <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-buy shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
                 <span className="text-[10px] text-muted">Available</span>
@@ -90,7 +118,7 @@ export default function Navbar({ activeMarket }: { activeMarket?: string }) {
             </div>
             <button
               onClick={handleLogout}
-              className="text-[11px] text-muted hover:text-white transition-colors px-3 py-1.5 rounded-md border border-line hover:border-line/80"
+              className="text-[11px] text-muted hover:text-sell transition-colors duration-150 px-3 py-1.5 rounded-md border border-line hover:border-sell/30"
             >
               Logout
             </button>
@@ -98,7 +126,7 @@ export default function Navbar({ activeMarket }: { activeMarket?: string }) {
         ) : (
           <Link
             href="/login"
-            className="text-[11px] text-accent hover:text-white transition-colors bg-accent-dim px-3 py-1.5 rounded-md border border-accent/20"
+            className="text-[11px] text-accent hover:text-white transition-all duration-150 bg-accent-dim hover:bg-accent/20 px-3 py-1.5 rounded-md border border-accent/20 hover:border-accent/40"
           >
             Login
           </Link>
