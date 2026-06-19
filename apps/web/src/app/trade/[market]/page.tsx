@@ -13,7 +13,7 @@ export default async function TradePage({
   const { market } = await params;
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-bg">
+    <div className="flex flex-col h-screen overflow-hidden bg-bg animate-fade-in">
       <Navbar activeMarket={market} />
       <PriceBar market={market} />
 
@@ -26,12 +26,12 @@ export default async function TradePage({
           <Chart market={market} />
         </div>
 
-        <div className="w-[268px] shrink-0 overflow-y-auto">
+        <div className="w-[268px] shrink-0 overflow-y-auto border-l border-line">
           <OrderForm market={market} />
         </div>
       </div>
 
-      <div className="h-44 shrink-0 overflow-hidden">
+      <div className="h-44 shrink-0 overflow-hidden border-t border-line">
         <Positions market={market} />
       </div>
     </div>

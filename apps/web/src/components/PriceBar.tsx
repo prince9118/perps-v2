@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { marketApi } from "@/lib/api";
 
+
 function Stat({
   label,
   value,
@@ -37,8 +38,16 @@ export default function PriceBar({ market }: { market: string }) {
     retry: false,
   });
 
+  const { data: insuranceData } = useQuery({
+    queryKey: ["insurance-fund"],
+    queryFn: () => marketApi.getInsuranceFund(),
+    refetchInterval: 60000,
+    retry: false,
+  });
+
   const price: number | null = priceData?.data?.price ?? null;
   const funding: number | null = fundingData?.data?.rates?.[0]?.rate ?? null;
+  const insuranceFund: number | null = insuranceData?.data?.funds?.[0]?.balance ?? null;
 
   return (
     <div className="h-11 border-b border-line flex items-center px-5 gap-6 shrink-0 bg-card">
@@ -60,6 +69,10 @@ export default function PriceBar({ market }: { market: string }) {
       />
       <Stat label="Open Interest" value="—" />
       <Stat label="24h Volume" value="—" />
+      <Stat
+        label="Insurance Fund"
+        value={insuranceFund != null ? `$${insuranceFund.toLocaleString()}` : "—"}
+      />
     </div>
   );
 }

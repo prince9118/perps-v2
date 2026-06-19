@@ -44,7 +44,17 @@ interface PositionHistory {
   createdAt: string;
 }
 
-type Tab = "positions" | "orders" | "history";
+interface Fill {
+  id: string;
+  market: string;
+  price: number;
+  quantity: number;
+  buyerId: string;
+  sellerId: string;
+  createdAt: string;
+}
+
+type Tab = "positions" | "orders" | "history" | "fills";
 
 export default function Positions({ market }: { market: string }) {
   const [tab, setTab] = useState<Tab>("positions");
@@ -75,6 +85,31 @@ export default function Positions({ market }: { market: string }) {
     enabled: !!user && tab === "history",
   });
 
+  const { data: fillsData } = useQuery({
+    queryKey: ["fills"],
+    queryFn: () => positionApi.getFills(),
+    retry: false,
+    enabled: !!user && tab === "fills",
+  });
+
+  const [closingAll, setClosingAll] = useState(false);
+
+  async function handleCloseAll() {
+    if (!positions.length || closingAll) return;
+    setClosingAll(true);
+    try {
+      await Promise.all(positions.map((p) => positionApi.closePosition(p.id)));
+      queryClient.invalidateQueries({ queryKey: ["positions"] });
+      const token = localStorage.getItem("token");
+      if (token) {
+        const res = await authApi.me();
+        if (res.data.user) setUser(res.data.user, token);
+      }
+    } finally {
+      setClosingAll(false);
+    }
+  }
+
   const { mutate: closePosition } = useMutation({
     mutationFn: (id: string) => positionApi.closePosition(id),
     onSuccess: async () => {
@@ -96,34 +131,56 @@ export default function Positions({ market }: { market: string }) {
   const allOrders: Order[] = orderData?.data?.orders ?? [];
   const openOrders = allOrders.filter((o) => o.status === "open" || o.status === "partial");
   const positionHistory: PositionHistory[] = historyData?.data?.history ?? [];
+  const fills: Fill[] = fillsData?.data?.fills ?? [];
+  const totalUnrealizedPnl = positions.reduce((sum, p) => sum + p.unrealizedPnl, 0);
 
   const tabs: { key: Tab; label: string; count?: number }[] = [
     { key: "positions", label: "Positions", count: positions.length },
     { key: "orders", label: "Open Orders", count: openOrders.length },
-    { key: "history", label: "Trade History" },
+    { key: "history", label: "History" },
+    { key: "fills", label: "Fills", count: fills.length },
   ];
 
   return (
     <div className="h-full flex flex-col bg-card border-t border-line">
-      <div className="flex items-center gap-0 px-2 border-b border-line shrink-0">
-        {tabs.map(({ key, label, count }) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            className={`px-3 py-2.5 text-[11px] font-semibold transition-all border-b-2 -mb-px whitespace-nowrap ${
-              tab === key
-                ? "border-accent text-[#e2e5f5]"
-                : "border-transparent text-muted hover:text-dim"
-            }`}
-          >
-            {label}
-            {count !== undefined && (
-              <span className={`ml-1.5 text-[10px] ${tab === key ? "text-dim" : "text-muted"}`}>
-                ({count})
+      <div className="flex items-center border-b border-line shrink-0">
+        <div className="flex px-2">
+          {tabs.map(({ key, label, count }) => (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={`px-3 py-2.5 text-[11px] font-semibold transition-all border-b-2 -mb-px whitespace-nowrap ${
+                tab === key
+                  ? "border-accent text-[#e2e5f5]"
+                  : "border-transparent text-muted hover:text-dim"
+              }`}
+            >
+              {label}
+              {count !== undefined && (
+                <span className={`ml-1.5 text-[10px] ${tab === key ? "text-dim" : "text-muted"}`}>
+                  ({count})
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <div className="ml-auto flex items-center gap-3 pr-4">
+          {tab === "positions" && positions.length > 0 && (
+            <>
+              <span className={`text-[11px] font-bold tabular-nums ${totalUnrealizedPnl >= 0 ? "text-buy" : "text-sell"}`}>
+                {totalUnrealizedPnl >= 0 ? "+" : ""}${totalUnrealizedPnl.toFixed(2)} PnL
               </span>
-            )}
-          </button>
-        ))}
+              <button
+                onClick={handleCloseAll}
+                disabled={closingAll}
+                className="text-[10px] font-semibold text-muted hover:text-sell border border-line hover:border-sell/40 px-2 py-0.5 rounded transition-all disabled:opacity-50"
+              >
+                {closingAll ? "Closing..." : "Close All"}
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 overflow-auto">
@@ -234,6 +291,37 @@ export default function Positions({ market }: { market: string }) {
                       </td>
                       <td className="px-4 py-2.5 text-right">
                         <span className="text-[10px] text-muted capitalize">{h.reason}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )
+        )}
+
+        {/* Fills tab */}
+        {tab === "fills" && (
+          fills.length === 0 ? (
+            <Empty text="No fills yet" />
+          ) : (
+            <table className="w-full text-[11px]">
+              <Thead cols={["Market", "Side", "Fill Price", "Size", "Time"]} />
+              <tbody>
+                {fills.map((f) => {
+                  const isBuyer = f.buyerId === user?.id;
+                  return (
+                    <tr key={f.id} className="border-b border-line/40 hover:bg-panel/30 transition-colors">
+                      <td className="px-4 py-2.5 text-[#e2e5f5] font-semibold">{f.market}</td>
+                      <td className={`px-4 py-2.5 font-bold ${isBuyer ? "text-buy" : "text-sell"}`}>
+                        {isBuyer ? "BUY" : "SELL"}
+                      </td>
+                      <td className="px-4 py-2.5 text-right text-[#e2e5f5] tabular-nums">
+                        ${Number(f.price).toLocaleString()}
+                      </td>
+                      <td className="px-4 py-2.5 text-right text-dim tabular-nums">{f.quantity}</td>
+                      <td className="px-4 py-2.5 text-right text-muted">
+                        {new Date(f.createdAt).toLocaleTimeString()}
                       </td>
                     </tr>
                   );

@@ -546,7 +546,7 @@ app.get("/insurance-fund",async(require,res)=>{
 });
 
 //backend status 
-app.get("/backend-staus",async(req,res)=>{
+app.get("/backend-status",async(req,res)=>{
     const users=await prisma.user.count();
     const orders=await prisma.order.count();
     const fills=await prisma.fill.count();

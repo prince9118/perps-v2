@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Level { price: number; quantity: number; }
 interface Trade { price: number; quantity: number; side: string; market: string; }
@@ -73,7 +73,7 @@ export default function LeftPanel({ market }: { market: string }) {
           <div
             className={`w-1.5 h-1.5 rounded-full ${
               connected
-                ? "bg-buy shadow-[0_0_6px_rgba(16,185,129,0.7)]"
+                ? "bg-buy animate-pulse-dot"
                 : "bg-muted"
             }`}
           />
@@ -94,9 +94,9 @@ export default function LeftPanel({ market }: { market: string }) {
                 <p className="text-[10px] text-muted text-center py-4">No asks</p>
               ) : (
                 [...orderbook.asks].reverse().map((ask, i) => (
-                  <div key={i} className="relative flex justify-between items-center px-3 py-[3px]">
+                  <div key={i} className="relative flex justify-between items-center px-3 py-[3px] hover:bg-sell-dim/20 transition-colors duration-100">
                     <div
-                      className="absolute right-0 top-0 bottom-0 bg-sell-dim"
+                      className="absolute right-0 top-0 bottom-0 bg-sell-dim depth-bar"
                       style={{ width: `${(ask.quantity / maxQty) * 85}%` }}
                     />
                     <span className="relative text-[11px] text-sell font-medium tabular-nums">
@@ -111,8 +111,8 @@ export default function LeftPanel({ market }: { market: string }) {
             </div>
 
             {/* Mid price + spread */}
-            <div className="px-3 py-1.5 border-y border-line bg-panel flex items-center justify-between shrink-0">
-              <span className="text-xs font-bold text-[#e2e5f5] tabular-nums">
+            <div className="px-3 py-1.5 border-y border-line bg-panel/80 flex items-center justify-between shrink-0 backdrop-blur-sm">
+              <span className="text-xs font-bold text-buy tabular-nums drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">
                 {orderbook.bids[0]
                   ? `$${orderbook.bids[0].price.toLocaleString(undefined, { minimumFractionDigits: 1 })}`
                   : "—"}
@@ -130,9 +130,9 @@ export default function LeftPanel({ market }: { market: string }) {
                 <p className="text-[10px] text-muted text-center py-4">No bids</p>
               ) : (
                 orderbook.bids.map((bid, i) => (
-                  <div key={i} className="relative flex justify-between items-center px-3 py-[3px]">
+                  <div key={i} className="relative flex justify-between items-center px-3 py-[3px] hover:bg-buy-dim/20 transition-colors duration-100">
                     <div
-                      className="absolute right-0 top-0 bottom-0 bg-buy-dim"
+                      className="absolute right-0 top-0 bottom-0 bg-buy-dim depth-bar"
                       style={{ width: `${(bid.quantity / maxQty) * 85}%` }}
                     />
                     <span className="relative text-[11px] text-buy font-medium tabular-nums">

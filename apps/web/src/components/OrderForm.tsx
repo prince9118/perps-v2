@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { orderApi, authApi } from "@/lib/api";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { orderApi, authApi, marketApi } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 
 export default function OrderForm({ market }: { market: string }) {
@@ -15,6 +15,14 @@ export default function OrderForm({ market }: { market: string }) {
   const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
   const setUser = useAuthStore((s) => s.setUser);
+
+  const { data: priceData } = useQuery({
+    queryKey: ["price", market],
+    queryFn: () => marketApi.getPrice(market),
+    refetchInterval: 3000,
+    retry: false,
+  });
+  const markPrice: number | null = priceData?.data?.price ?? null;
 
   const numPrice = Number(price) || 0;
   const numQty = Number(quantity) || 0;
@@ -72,20 +80,20 @@ export default function OrderForm({ market }: { market: string }) {
       <div className="flex border-b border-line">
         <button
           onClick={() => setSide("buy")}
-          className={`flex-1 py-3 text-xs font-bold transition-all border-b-2 ${
+          className={`flex-1 py-3 text-xs font-bold transition-all duration-150 border-b-2 active:scale-[0.98] ${
             isBuy
-              ? "border-buy text-buy bg-buy-dim"
-              : "border-transparent text-muted hover:text-dim"
+              ? "border-buy text-buy bg-buy-dim shadow-[inset_0_-2px_12px_rgba(16,185,129,0.08)]"
+              : "border-transparent text-muted hover:text-dim hover:bg-panel/40"
           }`}
         >
           Long / Buy
         </button>
         <button
           onClick={() => setSide("sell")}
-          className={`flex-1 py-3 text-xs font-bold transition-all border-b-2 ${
+          className={`flex-1 py-3 text-xs font-bold transition-all duration-150 border-b-2 active:scale-[0.98] ${
             !isBuy
-              ? "border-sell text-sell bg-sell-dim"
-              : "border-transparent text-muted hover:text-dim"
+              ? "border-sell text-sell bg-sell-dim shadow-[inset_0_-2px_12px_rgba(244,63,94,0.08)]"
+              : "border-transparent text-muted hover:text-dim hover:bg-panel/40"
           }`}
         >
           Short / Sell
@@ -150,7 +158,7 @@ export default function OrderForm({ market }: { market: string }) {
         </div>
 
         {/* Price */}
-        {orderType === "limit" && (
+        {orderType === "limit" ? (
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-muted uppercase tracking-widest font-medium">
               Price <span className="normal-case">USDT</span>
@@ -162,6 +170,13 @@ export default function OrderForm({ market }: { market: string }) {
               className="bg-panel border border-line rounded-lg px-3 py-2 text-xs text-[#e2e5f5] placeholder:text-muted focus:outline-none focus:border-accent/60 transition-colors tabular-nums"
               placeholder="0.00"
             />
+          </div>
+        ) : (
+          <div className="flex justify-between items-center bg-panel border border-line rounded-lg px-3 py-2">
+            <span className="text-[10px] text-muted uppercase tracking-widest">Est. Fill Price</span>
+            <span className="text-xs font-semibold text-[#e2e5f5] tabular-nums">
+              {markPrice ? `$${markPrice.toLocaleString()}` : "—"}
+            </span>
           </div>
         )}
 
@@ -239,10 +254,10 @@ export default function OrderForm({ market }: { market: string }) {
         <button
           onClick={() => mutate()}
           disabled={isPending || !quantity}
-          className={`py-3 rounded-lg font-bold text-xs text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed mt-auto ${
+          className={`py-3 rounded-lg font-bold text-xs text-white transition-all duration-150 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed mt-auto ${
             isBuy
-              ? "bg-buy hover:brightness-110 shadow-[0_2px_20px_rgba(16,185,129,0.2)]"
-              : "bg-sell hover:brightness-110 shadow-[0_2px_20px_rgba(244,63,94,0.2)]"
+              ? "bg-buy hover:brightness-110 shadow-[0_4px_24px_rgba(16,185,129,0.3)] hover:shadow-[0_4px_32px_rgba(16,185,129,0.45)]"
+              : "bg-sell hover:brightness-110 shadow-[0_4px_24px_rgba(244,63,94,0.3)] hover:shadow-[0_4px_32px_rgba(244,63,94,0.45)]"
           }`}
         >
           {isPending
