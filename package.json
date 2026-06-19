@@ -1,6 +1,7 @@
 {
   "name": "perps-v2",
   "private": true,
+  "packageManager": "bun@1.3.14",
   "workspaces": [
     "apps/*",
     "packages/*"

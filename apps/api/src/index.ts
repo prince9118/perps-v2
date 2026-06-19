@@ -90,7 +90,7 @@ app.post("/auth/signup",async(req,res)=>{
 
 // login api
 
-app.get("/auth/login",async(req,res)=>{
+app.post("/auth/login",async(req,res)=>{
     const {email,password}=req.body;
     const user=await prisma.user.findUnique({
         where:{email},
