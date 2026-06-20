@@ -3,7 +3,7 @@ import {prisma} from "@repo/db";
 
 const FUNDING_RATE=0.0001;
 async function runFunding(){
-    console.log("Running funding ...");
+    // console.log("Running funding ...");
     const positions =await prisma.position.findMany({
         where:{
             status:"open",
@@ -55,11 +55,11 @@ async function runFunding(){
             rate:FUNDING_RATE,
         },
     });
-    console.log("Funding completed")
+    // console.log("Funding completed")
 }
 
 async function main(){
-    console.log("Funding Service Started");
+    // console.log("Funding Service Started");
     while(true){
         await runFunding();
         await new Promise((resolve)=>setTimeout(resolve,60_000));

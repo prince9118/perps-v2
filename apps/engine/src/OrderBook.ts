@@ -90,7 +90,7 @@ export class OrderBook{
             const bestBid=this.getBestBid()!;
             const bestAsk=this.getBestAsk()!;
             if(bestBid.userId===bestAsk.userId){
-                console.log("Self Trade prevented");
+                // console.log("Self Trade prevented");
                 break;
             }
             const tradeQty=Math.min(

@@ -252,7 +252,7 @@ app.get("/orders",authMiddleware,async(req:any,res)=>{
 // get user fills
 
 app.get("/fills",authMiddleware,async(req:any,res)=>{
-     console.log("req.user in fills:", req.user);
+     // console.log("req.user in fills:", req.user);
     const fills=await prisma.fill.findMany({
         where:{
             OR:[
@@ -578,5 +578,5 @@ app.get("/markets", (req, res) => {
 
 
 app.listen(port,()=>{
-    console.log(`Backend is Working on Port ${port}`);
+    // console.log(`Backend is Working on Port ${port}`);
 })

@@ -11,6 +11,7 @@ export default function OrderForm({ market }: { market: string }) {
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [leverage, setLeverage] = useState("10");
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
@@ -48,7 +49,8 @@ export default function OrderForm({ market }: { market: string }) {
     setQuantity(size.toFixed(4));
   }
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { 
+    mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: () =>
       orderApi.createOrder({
         market,
@@ -70,6 +72,17 @@ export default function OrderForm({ market }: { market: string }) {
       }
     },
   });
+  const sendToAPI = () => {
+    if (!user) { setValidationError("Please log in to place an order."); return; }
+    if (numQty <= 0) { setValidationError("Size must be greater than 0."); return; }
+    if (orderType === "limit" && numPrice <= 0) { setValidationError("Price must be greater than 0."); return; }
+    if (requiredMargin !== null && requiredMargin > balance) {
+      setValidationError(`Insufficient balance — need $${requiredMargin.toFixed(2)} margin.`);
+      return;
+    }
+    setValidationError(null);
+    mutate();
+  };
 
   const isBuy = side === "buy";
   const baseAsset = market.split("-")[0];
@@ -165,8 +178,12 @@ export default function OrderForm({ market }: { market: string }) {
             </label>
             <input
               type="number"
+              min="0"
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) => {
+                const v = e.target.value;
+                setPrice(v);
+              }}
               className="bg-panel border border-line rounded-lg px-3 py-2 text-xs text-[#e2e5f5] placeholder:text-muted focus:outline-none focus:border-accent/60 transition-colors tabular-nums"
               placeholder="0.00"
             />
@@ -187,8 +204,12 @@ export default function OrderForm({ market }: { market: string }) {
           </label>
           <input
             type="number"
+            min="0"
             value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
+            onChange={(e) => {
+              const v = e.target.value;
+              setQuantity(v);
+            }}
             className="bg-panel border border-line rounded-lg px-3 py-2 text-xs text-[#e2e5f5] placeholder:text-muted focus:outline-none focus:border-accent/60 transition-colors tabular-nums"
             placeholder="0.0000"
           />
@@ -244,15 +265,15 @@ export default function OrderForm({ market }: { market: string }) {
             Order placed successfully
           </p>
         )}
-        {isError && (
+        {(isError || validationError) && (
           <p className="text-[11px] text-sell bg-sell-dim border border-sell/20 rounded-md px-3 py-1.5">
-            Failed — check backend connection
+            {validationError ?? "Failed — check backend connection"}
           </p>
         )}
 
         {/* Submit */}
         <button
-          onClick={() => mutate()}
+          onClick={() => sendToAPI()}
           disabled={isPending || !quantity}
           className={`py-3 rounded-lg font-bold text-xs text-white transition-all duration-150 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed mt-auto ${
             isBuy

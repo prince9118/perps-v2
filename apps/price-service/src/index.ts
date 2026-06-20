@@ -14,12 +14,12 @@ async function fetchPrice(symbol:string){
     
 }
 async function main() {
-    console.log("Price Service Started");
+    // console.log("Price Service Started");
     while(true){
         for(const item of MARKET){
             const price=await fetchPrice(item.symbol);
             await redis.set(`index_price:${item.market}`,price);
-            console.log(item.market,price);
+            // console.log(item.market,price);
         }
         await new Promise((resolve)=>setTimeout(resolve,3000));
     }

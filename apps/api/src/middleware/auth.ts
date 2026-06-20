@@ -7,7 +7,7 @@ export function authMiddleware(req:any,res:any,next:any){
             message:"Authirization header missing "
         });
     }
-    // console.log(authHeader);
+    // // console.log(authHeader);
     const token=authHeader.split(" ")[1];
     if(!token){
         return res.status(401).json({

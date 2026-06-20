@@ -28,7 +28,7 @@ wss.on("connection", async (socket) => {
   }
 
   socket.on("message", (message) => {
-    console.log("Received:", message.toString());
+    // console.log("Received:", message.toString());
   });
 });
 
@@ -66,7 +66,7 @@ async function listenTradeEvents() {
         }
       }
 
-      console.log("Broadcasted trade:", trade);
+      // console.log("Broadcasted trade:", trade);
 
       lastId = messageId;
     }
@@ -107,7 +107,7 @@ async function listenOrderbookEvents() {
         }
       }
 
-      console.log("Broadcasted trade:", orderbook);
+      // console.log("Broadcasted trade:", orderbook);
 
       lastId = messageId;
     }
@@ -117,4 +117,4 @@ async function listenOrderbookEvents() {
 listenTradeEvents();
 listenOrderbookEvents();
 
-console.log("WebSocket server running on port 8080");
+// console.log("WebSocket server running on port 8080");
