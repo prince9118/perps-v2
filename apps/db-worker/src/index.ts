@@ -16,7 +16,7 @@ function parseRedisFields(fields: string[]) {
 async function processTradeEvents(){
   let lastTradeId="$";
   while (true) {
-    console.log("Waiting for trade...");
+    // console.log("Waiting for trade...");
     const result = await redis.xread(
       "BLOCK",
       0,
@@ -105,7 +105,7 @@ async function processTradeEvents(){
               },
             },
           });
-          console.log("Fill saved to DB",fill);
+          // console.log("Fill saved to DB",fill);
         }
         lastTradeId=messageId;
     }
@@ -139,7 +139,7 @@ async function processOrderUpdate(){
             quantity:event.data.quantity
           }
         });
-        console.log("Order Updated",event.data);
+        // console.log("Order Updated",event.data);
       }
       lastOrderUpdateId=messageId;
     }
@@ -198,7 +198,7 @@ async function updatePosition(params:{
 
 
 async function main(){
-  console.log("DB Worker Started");
+  // console.log("DB Worker Started");
   await Promise.all([
     processTradeEvents(),
     processOrderUpdate()

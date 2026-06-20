@@ -13,7 +13,7 @@ function calculateLiquidationPrice(position:any){
 
 async function main(){
     
-    console.log("Liquidator Started");
+    // console.log("Liquidator Started");
 
     while(true){
         const positions=await prisma.position.findMany({
@@ -97,7 +97,7 @@ async function main(){
                 })
             );
             
-            console.log("position liquidated:",position.id);
+            // console.log("position liquidated:",position.id);
         }
         await new Promise((resolve)=>setTimeout(resolve,1000));
     }

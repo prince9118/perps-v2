@@ -25,12 +25,12 @@ function parseRedisFields(fields: string[]) {
 }
 
 async function main() {
-  console.log("Engine Started");
+  // console.log("Engine Started");
 
   let lastId = "$";
 
   while (true) {
-    console.log("waiting for the message...");
+    // console.log("waiting for the message...");
 
     const result = await redis.xread(
       "BLOCK",
@@ -52,8 +52,8 @@ async function main() {
           data: JSON.parse(parsedFields.data),
       };
 
-      console.log("Message ID:", messageId);
-      console.log("Event:", event);
+      // console.log("Message ID:", messageId);
+      // console.log("Event:", event);
 
       lastId = messageId;
       if(event.type==="ORDER_CREATE"){
@@ -74,7 +74,7 @@ async function main() {
           book.addOrder(order);
           // const fills=book.matchOrders();
           const{fills,updatedOrders}=book.matchOrders();
-          // console.log("fills:",fills);
+          // // console.log("fills:",fills);
 
           //snapshpts 
           const snapshot=book.getSnapshot();
@@ -98,7 +98,7 @@ async function main() {
               "data",
               JSON.stringify(fill)
             );
-            console.log("Trade Published",messageId,);
+            // console.log("Trade Published",messageId,);
           }
           for(const updatedOrder of updatedOrders){
             const messageId= await redis.xadd(
@@ -113,7 +113,7 @@ async function main() {
                 quantity:updatedOrder.quantity
               })
             );
-            console.log("Order updated Published",messageId)
+            // console.log("Order updated Published",messageId)
           }
         }
         
