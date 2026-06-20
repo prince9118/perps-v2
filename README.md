@@ -123,14 +123,7 @@ bunx prisma migrate dev
 cd ../..
 ```
 
-### Environment Variables
 
-**`apps/api/.env`**
-```env
-PORT=3001
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/perps"
-JWT_SECRET="your-secret-key"
-```
 
 **`apps/ws/.env`** — none required (Redis defaults to localhost:6379)
 
@@ -171,11 +164,4 @@ Visit [http://localhost:3000](http://localhost:3000) → auto-redirects to the B
 
 ---
 
-## Roadmap
 
-- [ ] Liquidation engine (auto-close underwater positions)
-- [ ] Auto-Deleveraging (ADL) system
-- [ ] Funding rate settlement (periodic payments)
-- [ ] Market order matching (fill at best available price)
-- [ ] Portfolio margin mode
-- [ ] Deploy to Railway + Vercel
