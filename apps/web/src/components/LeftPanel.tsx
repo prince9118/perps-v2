@@ -69,7 +69,7 @@ export default function LeftPanel({ market }: { market: string }) {
             {t === "book" ? "Order Book" : "Trades"}
           </button>
         ))}
-        <div className="ml-auto flex items-center gap-1.5 pr-1">
+        {/* <div className="ml-auto flex items-center gap-1.5 pr-1">
           <div
             className={`w-1.5 h-1.5 rounded-full ${
               connected
@@ -77,7 +77,7 @@ export default function LeftPanel({ market }: { market: string }) {
                 : "bg-muted"
             }`}
           />
-        </div>
+        </div> */}
       </div>
 
       {tab === "book" ? (

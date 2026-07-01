@@ -23,7 +23,7 @@ export default function SignupPage() {
       setUser(res.data.user, res.data.token);
       router.push("/trade/BTC-PERP");
     } catch {
-      setError("Signup failed — email may already be in use");
+      setError("Signup failed — email may already be in use.");
     } finally {
       setLoading(false);
     }
@@ -31,73 +31,86 @@ export default function SignupPage() {
 
   return (
     <div className="flex-1 flex items-center justify-center bg-bg px-4">
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-md animate-fade-in">
+
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2 mb-10">
-          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center shadow-[0_0_20px_rgba(92,115,242,0.5)]">
-            <span className="text-white text-sm font-black">P</span>
+        <div className="flex items-center justify-center gap-3 mb-12">
+          <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center shadow-[0_0_24px_rgba(92,115,242,0.45)]">
+            <span className="text-white text-base font-black">P</span>
           </div>
-          <span className="text-white font-bold text-lg tracking-widest">PERPS</span>
+          <span className="text-white font-bold text-2xl tracking-widest">PERPS</span>
         </div>
 
-        <div className="bg-card border border-line rounded-xl p-8">
-          <h1 className="text-base font-bold text-[#e2e5f5] mb-1">Create account</h1>
-          <p className="text-[11px] text-muted mb-6">
-            Start with <span className="text-buy font-semibold">$10,000</span> paper trading balance
-          </p>
+        <div className="bg-card border border-line rounded-2xl p-10">
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-semibold text-muted uppercase tracking-widest">
-                Email
+          {/* Heading */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">Create account</h1>
+            <p className="text-sm text-dim">
+              Start with a{" "}
+              <span className="text-buy font-semibold">$10,000</span>{" "}
+              paper trading balance — no real money needed.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-dim">
+                Email address
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-panel border border-line rounded-lg px-3 py-2.5 text-sm text-[#e2e5f5] placeholder:text-muted focus:outline-none focus:border-accent/60 transition-colors"
+                className="bg-panel border border-line rounded-xl px-4 py-3.5 text-base text-[#e2e5f5] placeholder:text-muted focus:outline-none focus:border-accent/60 transition-colors"
                 placeholder="you@example.com"
                 required
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-semibold text-muted uppercase tracking-widest">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-dim">
                 Password
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-panel border border-line rounded-lg px-3 py-2.5 text-sm text-[#e2e5f5] placeholder:text-muted focus:outline-none focus:border-accent/60 transition-colors"
-                placeholder="••••••••"
+                className="bg-panel border border-line rounded-xl px-4 py-3.5 text-base text-[#e2e5f5] placeholder:text-muted focus:outline-none focus:border-accent/60 transition-colors"
+                placeholder="Min. 6 characters"
                 required
                 minLength={6}
               />
             </div>
 
             {error && (
-              <p className="text-[11px] text-sell bg-sell-dim border border-sell/20 rounded-lg px-3 py-2">
+              <div className="text-sm text-sell bg-sell-dim border border-sell/20 rounded-xl px-4 py-3">
                 {error}
-              </p>
+              </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="bg-accent hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-lg text-sm transition-all mt-2 shadow-[0_2px_20px_rgba(92,115,242,0.25)]"
+              className="bg-accent hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl text-base transition-all mt-1 shadow-[0_4px_20px_rgba(92,115,242,0.3)] hover:shadow-[0_6px_28px_rgba(92,115,242,0.45)]"
             >
               {loading ? "Creating account..." : "Create Account"}
             </button>
+
           </form>
         </div>
 
-        <p className="text-center text-[11px] text-muted mt-5">
+        <p className="text-center text-sm text-muted mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-accent hover:text-[#e2e5f5] transition-colors">
+          <Link
+            href="/login"
+            className="text-accent hover:brightness-125 font-semibold transition-all"
+          >
             Sign in
           </Link>
         </p>
+
       </div>
     </div>
   );

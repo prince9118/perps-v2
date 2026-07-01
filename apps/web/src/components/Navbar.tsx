@@ -61,14 +61,14 @@ export default function Navbar({ activeMarket }: { activeMarket?: string }) {
         className="flex items-center gap-1.5 cursor-default"
         title={isOnline ? "All systems operational" : "Checking backend..."}
       >
-        <div
+        {/* <div
           className={`w-1.5 h-1.5 rounded-full ${
             isOnline ? "bg-buy animate-pulse-dot" : "bg-muted"
           }`}
-        />
-        <span className={`text-[10px] font-medium ${isOnline ? "text-buy" : "text-muted"}`}>
+        /> */}
+        {/* <span className={`text-[10px] font-medium ${isOnline ? "text-buy" : "text-muted"}`}>
           {isOnline ? "Live" : "—"}
-        </span>
+        </span> */}
       </div>
 
       <div className="w-px h-5 bg-line" />
@@ -97,8 +97,8 @@ export default function Navbar({ activeMarket }: { activeMarket?: string }) {
           <>
             <div className="flex items-center gap-3 bg-panel/60 px-3 py-1.5 rounded-lg border border-line/60 backdrop-blur-sm">
               <div className="flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-buy shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
-                <span className="text-[10px] text-muted">Available</span>
+                {/* <div className="w-1.5 h-1.5 rounded-full bg-buy shadow-[0_0_6px_rgba(16,185,129,0.6)]" /> */}
+                <span className="text-[10px] text-white">Available</span>
                 <span className="text-[11px] text-white font-semibold tabular-nums">
                   ${user.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
