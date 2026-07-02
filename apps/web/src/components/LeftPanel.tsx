@@ -13,7 +13,7 @@ export default function LeftPanel({ market }: { market: string }) {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8080");
+    const ws = new WebSocket(process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8080");
 
     ws.onopen = () => setConnected(true);
     ws.onclose = () => setConnected(false);

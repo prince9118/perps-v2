@@ -1,7 +1,7 @@
 import { WebSocketServer } from "ws";
 import { redis, createRedisClient } from "@repo/redis";
 
-const wss = new WebSocketServer({ port: 8080 });
+const wss = new WebSocketServer({ port: Number(process.env.PORT ?? 8080) });
 const redisSnapshot = createRedisClient(); // dedicated client — not blocked by any XREAD BLOCK 0
 
 wss.on("connection", async (socket) => {

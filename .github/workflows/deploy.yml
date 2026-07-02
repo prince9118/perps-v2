@@ -1,0 +1,104 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io/${{ github.repository_owner }}
+  SITE_ADDRESS: ${{ vars.SITE_ADDRESS }}
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  images:
+    needs: ci
+    # The VM is ARM (Azure Dpsv6), so build natively on GitHub's ARM runner.
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - name: perps-v2-backend
+            dockerfile: Dockerfile
+          - name: perps-v2-web
+            dockerfile: apps/web/Dockerfile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/arm64
+          push: true
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://${{ env.SITE_ADDRESS }}/api
+            NEXT_PUBLIC_WS_URL=wss://${{ env.SITE_ADDRESS }}/ws
+          tags: |
+            ${{ env.REGISTRY }}/${{ matrix.name }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ matrix.name }}:latest
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
+
+  deploy:
+    needs: images
+    runs-on: ubuntu-24.04
+    environment:
+      name: production
+      url: https://${{ vars.SITE_ADDRESS }}
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ vars.VM_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Upload stack files
+        run: scp deploy/docker-compose.prod.yml deploy/Caddyfile "${{ vars.VM_USER }}@${{ vars.VM_HOST }}:/opt/perps-v2/"
+
+      - name: Roll out
+        run: |
+          ssh "${{ vars.VM_USER }}@${{ vars.VM_HOST }}" bash -s <<SCRIPT
+          set -euo pipefail
+          cd /opt/perps-v2
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          export IMAGE_TAG=${{ github.sha }}
+          docker compose -f docker-compose.prod.yml --profile tools pull --quiet
+          docker compose -f docker-compose.prod.yml up -d --wait postgres redis
+          docker compose -f docker-compose.prod.yml run --rm migrate
+          docker compose -f docker-compose.prod.yml up -d --remove-orphans --wait --wait-timeout 180
+          docker logout ghcr.io
+          docker image prune -f
+          docker compose -f docker-compose.prod.yml ps
+          SCRIPT
+
+      - name: Smoke test
+        run: |
+          for i in $(seq 1 20); do
+            if curl -fsS "https://${{ vars.SITE_ADDRESS }}/api/markets" >/dev/null; then echo ok; exit 0; fi
+            sleep 6
+          done
+          echo "API did not become healthy"; exit 1

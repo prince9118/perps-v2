@@ -1,0 +1,118 @@
+# Production stack. Runs on the VM from /opt/perps-v2; values come from /opt/perps-v2/.env
+# (see .env.example). Images are built and pushed to GHCR by .github/workflows/deploy.yml.
+x-backend: &backend
+  image: ghcr.io/prince9118/perps-v2-backend:${IMAGE_TAG:-latest}
+  restart: unless-stopped
+  env_file: .env
+  environment:
+    DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+  depends_on:
+    postgres: { condition: service_healthy }
+    redis: { condition: service_healthy }
+  logging: &logging
+    driver: json-file
+    options: { max-size: "20m", max-file: "5" }
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      retries: 20
+    logging: *logging
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 20
+    logging: *logging
+
+  # One-shot: the deploy runs `docker compose run --rm migrate` before rolling services.
+  migrate:
+    image: ghcr.io/prince9118/perps-v2-backend:${IMAGE_TAG:-latest}
+    profiles: [tools]
+    restart: "no"
+    working_dir: /app/packages/db
+    command: ["bunx", "prisma", "migrate", "deploy"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres: { condition: service_healthy }
+    logging: *logging
+
+  api:
+    <<: *backend
+    command: ["bun", "run", "apps/api/src/index.ts"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      PORT: "3001"
+
+  ws:
+    <<: *backend
+    command: ["bun", "run", "apps/ws/src/index.ts"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      PORT: "8080"
+
+  # The matching engine keeps the orderbook in memory: never run more than one.
+  engine:
+    <<: *backend
+    command: ["bun", "run", "apps/engine/src/index.ts"]
+
+  db-worker:
+    <<: *backend
+    command: ["bun", "run", "apps/db-worker/src/index.ts"]
+
+  price-service:
+    <<: *backend
+    command: ["bun", "run", "apps/price-service/src/index.ts"]
+
+  funding-service:
+    <<: *backend
+    command: ["bun", "run", "apps/funding-service/src/index.ts"]
+
+  liquidator:
+    <<: *backend
+    command: ["bun", "run", "apps/liquidator/src/index.ts"]
+
+  web:
+    image: ghcr.io/prince9118/perps-v2-web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    logging: *logging
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+      - caddyconfig:/config
+    depends_on: [api, ws, web]
+    logging: *logging
+
+volumes:
+  pgdata:
+  redisdata:
+  caddydata:
+  caddyconfig:
