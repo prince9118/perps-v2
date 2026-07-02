@@ -43,7 +43,7 @@ Built as a deep learning project to understand every layer of a real exchange: f
 
 | Layer | Tech |
 |---|---|
-| Frontend | Next.js 15 (App Router), React, Tailwind CSS 4, TanStack Query v5 |
+| Frontend | Next.js 15 (App Router), React, Tailwind CSS 4, TanStack Query |
 | State | Zustand (auth + balance) |
 | Real-time | WebSocket server (ws library), Redis Streams |
 | API | Express.js, JWT auth, Zod validation |
@@ -51,7 +51,7 @@ Built as a deep learning project to understand every layer of a real exchange: f
 | Database | PostgreSQL + Prisma ORM |
 | Cache / Pub-Sub | Redis (ioredis), Redis Streams (XREAD / XREVRANGE) |
 | Runtime | Bun |
-| Monorepo | Turborepo |
+Turborepo |
 
 ---
 
