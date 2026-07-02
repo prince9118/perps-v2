@@ -2,7 +2,8 @@
 FROM oven/bun:1.3 AS deps
 WORKDIR /app
 COPY . .
-RUN bun install --frozen-lockfile
+# Retries cover flaky registry downloads seen on the ARM runner.
+RUN for i in 1 2 3; do bun install --frozen-lockfile && break || { [ $i = 3 ] && exit 1; echo "bun install failed, retrying ($i)"; rm -rf node_modules; sleep 5; }; done
 
 FROM node:22-slim AS build
 WORKDIR /app
