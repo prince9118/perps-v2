@@ -28,7 +28,7 @@ export const marketApi = {
   getPrice: (market: string) => api.get(`/price/${market}`),
   getFundingRate: () => api.get("/funding-rate"),
   getInsuranceFund: () => api.get("/insurance-fund"),
-  getBackendStatus: () => api.get("/backend-staus"),
+  getBackendStatus: () => api.get("/backend-status"),
 };
 
 
