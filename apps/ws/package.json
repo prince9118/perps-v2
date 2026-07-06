@@ -4,6 +4,7 @@
   },
   "name": "@repo/ws",
   "dependencies": {
+    "@repo/common": "workspace:*",
     "@repo/redis": "workspace:*",
     "ws": "^8.18.0"
   },

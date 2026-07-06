@@ -1,2 +1,0 @@
-export const ORDER_CREATE ="ORDER_CREATE";
-export const ORDER_CANCEL="ORDER_CANCEL";

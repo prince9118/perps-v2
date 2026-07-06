@@ -1,6 +1,6 @@
 {
   "name": "price-service",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "private": true,
   "devDependencies": {
@@ -8,7 +8,9 @@
   },
   "peerDependencies": {
     "typescript": "^5"
-  },"dependencies": {
+  },
+  "dependencies": {
+    "@repo/common": "workspace:*",
     "@repo/redis": "workspace:*"
   },
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "funding-service",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "private": true,
   "devDependencies": {
@@ -10,8 +10,10 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "dotenv": "^17.4.2",
-    "@repo/db": "workspace:*"
+    "@repo/common": "workspace:*",
+    "@repo/db": "workspace:*",
+    "@repo/redis": "workspace:*",
+    "dotenv": "^17.4.2"
   },
   "scripts": {
     "dev": "bun run src/index.ts"

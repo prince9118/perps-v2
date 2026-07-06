@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@repo/common": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/redis": "workspace:*",
     "dotenv": "^17.4.2"
