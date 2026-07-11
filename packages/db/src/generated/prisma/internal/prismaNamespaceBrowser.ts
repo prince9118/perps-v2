@@ -59,7 +59,8 @@ export const ModelName = {
   FundingRate: 'FundingRate',
   FundingPayment: 'FundingPayment',
   FeeAccount: 'FeeAccount',
-  PositionHistory: 'PositionHistory'
+  PositionHistory: 'PositionHistory',
+  ProcessedEvent: 'ProcessedEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -102,6 +103,12 @@ export const OrderScalarFieldEnum = {
   quantity: 'quantity',
   originalQuantity: 'originalQuantity',
   leverage: 'leverage',
+  lockedMargin: 'lockedMargin',
+  reduceOnly: 'reduceOnly',
+  source: 'source',
+  reason: 'reason',
+  acceptedAt: 'acceptedAt',
+  engineSeq: 'engineSeq',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -111,6 +118,7 @@ export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof Or
 
 export const FillScalarFieldEnum = {
   id: 'id',
+  tradeId: 'tradeId',
   buyOrderId: 'buyOrderId',
   sellOrderId: 'sellOrderId',
   buyerId: 'buyerId',
@@ -120,6 +128,7 @@ export const FillScalarFieldEnum = {
   quantity: 'quantity',
   buyerFee: 'buyerFee',
   sellerFee: 'sellerFee',
+  takerSide: 'takerSide',
   createdAt: 'createdAt'
 } as const
 
@@ -160,6 +169,7 @@ export const FundingRateScalarFieldEnum = {
   id: 'id',
   market: 'market',
   rate: 'rate',
+  period: 'period',
   createdAt: 'createdAt'
 } as const
 
@@ -205,6 +215,14 @@ export const PositionHistoryScalarFieldEnum = {
 } as const
 
 export type PositionHistoryScalarFieldEnum = (typeof PositionHistoryScalarFieldEnum)[keyof typeof PositionHistoryScalarFieldEnum]
+
+
+export const ProcessedEventScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt'
+} as const
+
+export type ProcessedEventScalarFieldEnum = (typeof ProcessedEventScalarFieldEnum)[keyof typeof ProcessedEventScalarFieldEnum]
 
 
 export const SortOrder = {

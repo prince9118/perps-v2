@@ -42,6 +42,7 @@ export type FillSumAggregateOutputType = {
 
 export type FillMinAggregateOutputType = {
   id: string | null
+  tradeId: string | null
   buyOrderId: string | null
   sellOrderId: string | null
   buyerId: string | null
@@ -51,11 +52,13 @@ export type FillMinAggregateOutputType = {
   quantity: number | null
   buyerFee: number | null
   sellerFee: number | null
+  takerSide: string | null
   createdAt: Date | null
 }
 
 export type FillMaxAggregateOutputType = {
   id: string | null
+  tradeId: string | null
   buyOrderId: string | null
   sellOrderId: string | null
   buyerId: string | null
@@ -65,11 +68,13 @@ export type FillMaxAggregateOutputType = {
   quantity: number | null
   buyerFee: number | null
   sellerFee: number | null
+  takerSide: string | null
   createdAt: Date | null
 }
 
 export type FillCountAggregateOutputType = {
   id: number
+  tradeId: number
   buyOrderId: number
   sellOrderId: number
   buyerId: number
@@ -79,6 +84,7 @@ export type FillCountAggregateOutputType = {
   quantity: number
   buyerFee: number
   sellerFee: number
+  takerSide: number
   createdAt: number
   _all: number
 }
@@ -100,6 +106,7 @@ export type FillSumAggregateInputType = {
 
 export type FillMinAggregateInputType = {
   id?: true
+  tradeId?: true
   buyOrderId?: true
   sellOrderId?: true
   buyerId?: true
@@ -109,11 +116,13 @@ export type FillMinAggregateInputType = {
   quantity?: true
   buyerFee?: true
   sellerFee?: true
+  takerSide?: true
   createdAt?: true
 }
 
 export type FillMaxAggregateInputType = {
   id?: true
+  tradeId?: true
   buyOrderId?: true
   sellOrderId?: true
   buyerId?: true
@@ -123,11 +132,13 @@ export type FillMaxAggregateInputType = {
   quantity?: true
   buyerFee?: true
   sellerFee?: true
+  takerSide?: true
   createdAt?: true
 }
 
 export type FillCountAggregateInputType = {
   id?: true
+  tradeId?: true
   buyOrderId?: true
   sellOrderId?: true
   buyerId?: true
@@ -137,6 +148,7 @@ export type FillCountAggregateInputType = {
   quantity?: true
   buyerFee?: true
   sellerFee?: true
+  takerSide?: true
   createdAt?: true
   _all?: true
 }
@@ -229,6 +241,7 @@ export type FillGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type FillGroupByOutputType = {
   id: string
+  tradeId: string | null
   buyOrderId: string
   sellOrderId: string
   buyerId: string
@@ -238,6 +251,7 @@ export type FillGroupByOutputType = {
   quantity: number
   buyerFee: number
   sellerFee: number
+  takerSide: string | null
   createdAt: Date
   _count: FillCountAggregateOutputType | null
   _avg: FillAvgAggregateOutputType | null
@@ -266,6 +280,7 @@ export type FillWhereInput = {
   OR?: Prisma.FillWhereInput[]
   NOT?: Prisma.FillWhereInput | Prisma.FillWhereInput[]
   id?: Prisma.StringFilter<"Fill"> | string
+  tradeId?: Prisma.StringNullableFilter<"Fill"> | string | null
   buyOrderId?: Prisma.StringFilter<"Fill"> | string
   sellOrderId?: Prisma.StringFilter<"Fill"> | string
   buyerId?: Prisma.StringFilter<"Fill"> | string
@@ -275,11 +290,13 @@ export type FillWhereInput = {
   quantity?: Prisma.FloatFilter<"Fill"> | number
   buyerFee?: Prisma.FloatFilter<"Fill"> | number
   sellerFee?: Prisma.FloatFilter<"Fill"> | number
+  takerSide?: Prisma.StringNullableFilter<"Fill"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Fill"> | Date | string
 }
 
 export type FillOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  tradeId?: Prisma.SortOrderInput | Prisma.SortOrder
   buyOrderId?: Prisma.SortOrder
   sellOrderId?: Prisma.SortOrder
   buyerId?: Prisma.SortOrder
@@ -289,11 +306,13 @@ export type FillOrderByWithRelationInput = {
   quantity?: Prisma.SortOrder
   buyerFee?: Prisma.SortOrder
   sellerFee?: Prisma.SortOrder
+  takerSide?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type FillWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  tradeId?: string
   AND?: Prisma.FillWhereInput | Prisma.FillWhereInput[]
   OR?: Prisma.FillWhereInput[]
   NOT?: Prisma.FillWhereInput | Prisma.FillWhereInput[]
@@ -306,11 +325,13 @@ export type FillWhereUniqueInput = Prisma.AtLeast<{
   quantity?: Prisma.FloatFilter<"Fill"> | number
   buyerFee?: Prisma.FloatFilter<"Fill"> | number
   sellerFee?: Prisma.FloatFilter<"Fill"> | number
+  takerSide?: Prisma.StringNullableFilter<"Fill"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Fill"> | Date | string
-}, "id">
+}, "id" | "tradeId">
 
 export type FillOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  tradeId?: Prisma.SortOrderInput | Prisma.SortOrder
   buyOrderId?: Prisma.SortOrder
   sellOrderId?: Prisma.SortOrder
   buyerId?: Prisma.SortOrder
@@ -320,6 +341,7 @@ export type FillOrderByWithAggregationInput = {
   quantity?: Prisma.SortOrder
   buyerFee?: Prisma.SortOrder
   sellerFee?: Prisma.SortOrder
+  takerSide?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.FillCountOrderByAggregateInput
   _avg?: Prisma.FillAvgOrderByAggregateInput
@@ -333,6 +355,7 @@ export type FillScalarWhereWithAggregatesInput = {
   OR?: Prisma.FillScalarWhereWithAggregatesInput[]
   NOT?: Prisma.FillScalarWhereWithAggregatesInput | Prisma.FillScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Fill"> | string
+  tradeId?: Prisma.StringNullableWithAggregatesFilter<"Fill"> | string | null
   buyOrderId?: Prisma.StringWithAggregatesFilter<"Fill"> | string
   sellOrderId?: Prisma.StringWithAggregatesFilter<"Fill"> | string
   buyerId?: Prisma.StringWithAggregatesFilter<"Fill"> | string
@@ -342,11 +365,13 @@ export type FillScalarWhereWithAggregatesInput = {
   quantity?: Prisma.FloatWithAggregatesFilter<"Fill"> | number
   buyerFee?: Prisma.FloatWithAggregatesFilter<"Fill"> | number
   sellerFee?: Prisma.FloatWithAggregatesFilter<"Fill"> | number
+  takerSide?: Prisma.StringNullableWithAggregatesFilter<"Fill"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Fill"> | Date | string
 }
 
 export type FillCreateInput = {
   id?: string
+  tradeId?: string | null
   buyOrderId: string
   sellOrderId: string
   buyerId: string
@@ -356,11 +381,13 @@ export type FillCreateInput = {
   quantity: number
   buyerFee?: number
   sellerFee?: number
+  takerSide?: string | null
   createdAt?: Date | string
 }
 
 export type FillUncheckedCreateInput = {
   id?: string
+  tradeId?: string | null
   buyOrderId: string
   sellOrderId: string
   buyerId: string
@@ -370,11 +397,13 @@ export type FillUncheckedCreateInput = {
   quantity: number
   buyerFee?: number
   sellerFee?: number
+  takerSide?: string | null
   createdAt?: Date | string
 }
 
 export type FillUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buyOrderId?: Prisma.StringFieldUpdateOperationsInput | string
   sellOrderId?: Prisma.StringFieldUpdateOperationsInput | string
   buyerId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -384,11 +413,13 @@ export type FillUpdateInput = {
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerFee?: Prisma.FloatFieldUpdateOperationsInput | number
   sellerFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  takerSide?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type FillUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buyOrderId?: Prisma.StringFieldUpdateOperationsInput | string
   sellOrderId?: Prisma.StringFieldUpdateOperationsInput | string
   buyerId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -398,11 +429,13 @@ export type FillUncheckedUpdateInput = {
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerFee?: Prisma.FloatFieldUpdateOperationsInput | number
   sellerFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  takerSide?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type FillCreateManyInput = {
   id?: string
+  tradeId?: string | null
   buyOrderId: string
   sellOrderId: string
   buyerId: string
@@ -412,11 +445,13 @@ export type FillCreateManyInput = {
   quantity: number
   buyerFee?: number
   sellerFee?: number
+  takerSide?: string | null
   createdAt?: Date | string
 }
 
 export type FillUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buyOrderId?: Prisma.StringFieldUpdateOperationsInput | string
   sellOrderId?: Prisma.StringFieldUpdateOperationsInput | string
   buyerId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -426,11 +461,13 @@ export type FillUpdateManyMutationInput = {
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerFee?: Prisma.FloatFieldUpdateOperationsInput | number
   sellerFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  takerSide?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type FillUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buyOrderId?: Prisma.StringFieldUpdateOperationsInput | string
   sellOrderId?: Prisma.StringFieldUpdateOperationsInput | string
   buyerId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -440,11 +477,13 @@ export type FillUncheckedUpdateManyInput = {
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerFee?: Prisma.FloatFieldUpdateOperationsInput | number
   sellerFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  takerSide?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type FillCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tradeId?: Prisma.SortOrder
   buyOrderId?: Prisma.SortOrder
   sellOrderId?: Prisma.SortOrder
   buyerId?: Prisma.SortOrder
@@ -454,6 +493,7 @@ export type FillCountOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   buyerFee?: Prisma.SortOrder
   sellerFee?: Prisma.SortOrder
+  takerSide?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -466,6 +506,7 @@ export type FillAvgOrderByAggregateInput = {
 
 export type FillMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tradeId?: Prisma.SortOrder
   buyOrderId?: Prisma.SortOrder
   sellOrderId?: Prisma.SortOrder
   buyerId?: Prisma.SortOrder
@@ -475,11 +516,13 @@ export type FillMaxOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   buyerFee?: Prisma.SortOrder
   sellerFee?: Prisma.SortOrder
+  takerSide?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type FillMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tradeId?: Prisma.SortOrder
   buyOrderId?: Prisma.SortOrder
   sellOrderId?: Prisma.SortOrder
   buyerId?: Prisma.SortOrder
@@ -489,6 +532,7 @@ export type FillMinOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   buyerFee?: Prisma.SortOrder
   sellerFee?: Prisma.SortOrder
+  takerSide?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -503,6 +547,7 @@ export type FillSumOrderByAggregateInput = {
 
 export type FillSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tradeId?: boolean
   buyOrderId?: boolean
   sellOrderId?: boolean
   buyerId?: boolean
@@ -512,11 +557,13 @@ export type FillSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   quantity?: boolean
   buyerFee?: boolean
   sellerFee?: boolean
+  takerSide?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["fill"]>
 
 export type FillSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tradeId?: boolean
   buyOrderId?: boolean
   sellOrderId?: boolean
   buyerId?: boolean
@@ -526,11 +573,13 @@ export type FillSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   quantity?: boolean
   buyerFee?: boolean
   sellerFee?: boolean
+  takerSide?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["fill"]>
 
 export type FillSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tradeId?: boolean
   buyOrderId?: boolean
   sellOrderId?: boolean
   buyerId?: boolean
@@ -540,11 +589,13 @@ export type FillSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   quantity?: boolean
   buyerFee?: boolean
   sellerFee?: boolean
+  takerSide?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["fill"]>
 
 export type FillSelectScalar = {
   id?: boolean
+  tradeId?: boolean
   buyOrderId?: boolean
   sellOrderId?: boolean
   buyerId?: boolean
@@ -554,16 +605,18 @@ export type FillSelectScalar = {
   quantity?: boolean
   buyerFee?: boolean
   sellerFee?: boolean
+  takerSide?: boolean
   createdAt?: boolean
 }
 
-export type FillOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "buyOrderId" | "sellOrderId" | "buyerId" | "sellerId" | "market" | "price" | "quantity" | "buyerFee" | "sellerFee" | "createdAt", ExtArgs["result"]["fill"]>
+export type FillOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tradeId" | "buyOrderId" | "sellOrderId" | "buyerId" | "sellerId" | "market" | "price" | "quantity" | "buyerFee" | "sellerFee" | "takerSide" | "createdAt", ExtArgs["result"]["fill"]>
 
 export type $FillPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Fill"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    tradeId: string | null
     buyOrderId: string
     sellOrderId: string
     buyerId: string
@@ -573,6 +626,7 @@ export type $FillPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     quantity: number
     buyerFee: number
     sellerFee: number
+    takerSide: string | null
     createdAt: Date
   }, ExtArgs["result"]["fill"]>
   composites: {}
@@ -998,6 +1052,7 @@ export interface Prisma__FillClient<T, Null = never, ExtArgs extends runtime.Typ
  */
 export interface FillFieldRefs {
   readonly id: Prisma.FieldRef<"Fill", 'String'>
+  readonly tradeId: Prisma.FieldRef<"Fill", 'String'>
   readonly buyOrderId: Prisma.FieldRef<"Fill", 'String'>
   readonly sellOrderId: Prisma.FieldRef<"Fill", 'String'>
   readonly buyerId: Prisma.FieldRef<"Fill", 'String'>
@@ -1007,6 +1062,7 @@ export interface FillFieldRefs {
   readonly quantity: Prisma.FieldRef<"Fill", 'Float'>
   readonly buyerFee: Prisma.FieldRef<"Fill", 'Float'>
   readonly sellerFee: Prisma.FieldRef<"Fill", 'Float'>
+  readonly takerSide: Prisma.FieldRef<"Fill", 'String'>
   readonly createdAt: Prisma.FieldRef<"Fill", 'DateTime'>
 }
     

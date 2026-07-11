@@ -7,103 +7,134 @@ datasource db {
   provider = "postgresql"
 }
 
-model User{
-  id           String @id @default(uuid())
-  email        String @unique
-  passwordHash String
-  balance      Float   @default(0)
-  lockedBalance Float @default(0)
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  balance       Float    @default(0)
+  lockedBalance Float    @default(0)
   createdAt     DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  updatedAt     DateTime @updatedAt
 }
 
 model Order {
-  id      String  @id @default(uuid())
-  userId  String
-  market  String  // BTC,ETH,SOL
-  side    String  //buy,sell
-  type    String  //limit or market
-  status  String  @default("open")  //open,filled,cancelled
-  price   Float?
-  quantity   Float
-  originalQuantity Float @default(0)
-  leverage Float @default(1)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               String    @id @default(uuid())
+  userId           String
+  market           String
+  side             String
+  type             String
+  status           String    @default("open")
+  price            Float?
+  quantity         Float
+  originalQuantity Float     @default(0)
+  leverage         Float     @default(1)
+  lockedMargin     Float     @default(0)
+  reduceOnly       Boolean   @default(false)
+  source           String    @default("user")
+  reason           String?
+  acceptedAt       DateTime?
+  engineSeq        String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([status, market])
 }
 
-model Fill{
-  id  String @id @default(uuid())
-  buyOrderId String
-  sellOrderId   String
-  buyerId    String 
-  sellerId   String
-  market     String
-  price    Float
-  quantity  Float 
-  buyerFee  Float @default(0)
-  sellerFee Float @default(0)
+model Fill {
+  id          String   @id @default(uuid())
+  tradeId     String?  @unique
+  buyOrderId  String
+  sellOrderId String
+  buyerId     String
+  sellerId    String
+  market      String
+  price       Float
+  quantity    Float
+  buyerFee    Float    @default(0)
+  sellerFee   Float    @default(0)
+  takerSide   String?
   createdAt   DateTime @default(now())
+
+  @@index([buyerId, createdAt])
+  @@index([sellerId, createdAt])
 }
 
 model Position {
-  id  String @id @default(uuid())
-  userId String
-  market  String
-  
-  side String
-  status   String @default("open") //open, closed
-
-  quantity Float
-  entryPrice Float 
-  leverage  Float 
-  margin    Float
-  pnl      Float @default(0)
-  riskScore  Float @default(0)
-  createdAt  DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
-model InsuranceFund{
-  id       String   @id@default(uuid())
-  market   String   @unique
-  balance  Float    @default(0)
-  createdAt  DateTime  @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model FundingRate{
-  id   String   @id@default(uuid())
-  market  String 
-  rate   Float
-  createdAt  DateTime @default(now())
-}
-
-model FundingPayment{
-  id String @id@default(uuid())
-  userId  String
-  market  String
-  amount  Float
-  side  String 
-  createdAt DateTime @default(now())
-}
-model FeeAccount{
-  id   String @id@default(uuid())
-  market String @unique
-  balance Float @default(0)
-  createdAt DateTime  @default(now())
-  updatedAt  DateTime @updatedAt
-}
-model PositionHistory{
-  id     String    @id@default(uuid())
-  userId   String
-  market   String
-  side    String
-  quantity Float 
+  id         String   @id @default(uuid())
+  userId     String
+  market     String
+  side       String
+  status     String   @default("open")
+  quantity   Float
   entryPrice Float
-  exitPrice   Float?
-  leverage   Float 
-  margin   Float 
-  pnl    Float 
-  reason    String
+  leverage   Float
+  margin     Float
+  pnl        Float    @default(0)
+  riskScore  Float    @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId, status])
+  @@index([status, market])
+}
+
+model InsuranceFund {
+  id        String   @id @default(uuid())
+  market    String   @unique
+  balance   Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FundingRate {
+  id        String    @id @default(uuid())
+  market    String
+  rate      Float
+  period    DateTime?
   createdAt DateTime  @default(now())
+
+  @@unique([market, period])
+  @@index([createdAt])
+}
+
+model FundingPayment {
+  id        String   @id @default(uuid())
+  userId    String
+  market    String
+  amount    Float
+  side      String
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model FeeAccount {
+  id        String   @id @default(uuid())
+  market    String   @unique
+  balance   Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PositionHistory {
+  id         String   @id @default(uuid())
+  userId     String
+  market     String
+  side       String
+  quantity   Float
+  entryPrice Float
+  exitPrice  Float?
+  leverage   Float
+  margin     Float
+  pnl        Float
+  reason     String
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model ProcessedEvent {
+  id        String   @id
+  createdAt DateTime @default(now())
 }

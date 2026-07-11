@@ -31,6 +31,7 @@ export type OrderAvgAggregateOutputType = {
   quantity: number | null
   originalQuantity: number | null
   leverage: number | null
+  lockedMargin: number | null
 }
 
 export type OrderSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type OrderSumAggregateOutputType = {
   quantity: number | null
   originalQuantity: number | null
   leverage: number | null
+  lockedMargin: number | null
 }
 
 export type OrderMinAggregateOutputType = {
@@ -51,6 +53,12 @@ export type OrderMinAggregateOutputType = {
   quantity: number | null
   originalQuantity: number | null
   leverage: number | null
+  lockedMargin: number | null
+  reduceOnly: boolean | null
+  source: string | null
+  reason: string | null
+  acceptedAt: Date | null
+  engineSeq: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +74,12 @@ export type OrderMaxAggregateOutputType = {
   quantity: number | null
   originalQuantity: number | null
   leverage: number | null
+  lockedMargin: number | null
+  reduceOnly: boolean | null
+  source: string | null
+  reason: string | null
+  acceptedAt: Date | null
+  engineSeq: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -81,6 +95,12 @@ export type OrderCountAggregateOutputType = {
   quantity: number
   originalQuantity: number
   leverage: number
+  lockedMargin: number
+  reduceOnly: number
+  source: number
+  reason: number
+  acceptedAt: number
+  engineSeq: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -92,6 +112,7 @@ export type OrderAvgAggregateInputType = {
   quantity?: true
   originalQuantity?: true
   leverage?: true
+  lockedMargin?: true
 }
 
 export type OrderSumAggregateInputType = {
@@ -99,6 +120,7 @@ export type OrderSumAggregateInputType = {
   quantity?: true
   originalQuantity?: true
   leverage?: true
+  lockedMargin?: true
 }
 
 export type OrderMinAggregateInputType = {
@@ -112,6 +134,12 @@ export type OrderMinAggregateInputType = {
   quantity?: true
   originalQuantity?: true
   leverage?: true
+  lockedMargin?: true
+  reduceOnly?: true
+  source?: true
+  reason?: true
+  acceptedAt?: true
+  engineSeq?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -127,6 +155,12 @@ export type OrderMaxAggregateInputType = {
   quantity?: true
   originalQuantity?: true
   leverage?: true
+  lockedMargin?: true
+  reduceOnly?: true
+  source?: true
+  reason?: true
+  acceptedAt?: true
+  engineSeq?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -142,6 +176,12 @@ export type OrderCountAggregateInputType = {
   quantity?: true
   originalQuantity?: true
   leverage?: true
+  lockedMargin?: true
+  reduceOnly?: true
+  source?: true
+  reason?: true
+  acceptedAt?: true
+  engineSeq?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -244,6 +284,12 @@ export type OrderGroupByOutputType = {
   quantity: number
   originalQuantity: number
   leverage: number
+  lockedMargin: number
+  reduceOnly: boolean
+  source: string
+  reason: string | null
+  acceptedAt: Date | null
+  engineSeq: string | null
   createdAt: Date
   updatedAt: Date
   _count: OrderCountAggregateOutputType | null
@@ -282,6 +328,12 @@ export type OrderWhereInput = {
   quantity?: Prisma.FloatFilter<"Order"> | number
   originalQuantity?: Prisma.FloatFilter<"Order"> | number
   leverage?: Prisma.FloatFilter<"Order"> | number
+  lockedMargin?: Prisma.FloatFilter<"Order"> | number
+  reduceOnly?: Prisma.BoolFilter<"Order"> | boolean
+  source?: Prisma.StringFilter<"Order"> | string
+  reason?: Prisma.StringNullableFilter<"Order"> | string | null
+  acceptedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  engineSeq?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
 }
@@ -297,6 +349,12 @@ export type OrderOrderByWithRelationInput = {
   quantity?: Prisma.SortOrder
   originalQuantity?: Prisma.SortOrder
   leverage?: Prisma.SortOrder
+  lockedMargin?: Prisma.SortOrder
+  reduceOnly?: Prisma.SortOrder
+  source?: Prisma.SortOrder
+  reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  engineSeq?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -315,6 +373,12 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   quantity?: Prisma.FloatFilter<"Order"> | number
   originalQuantity?: Prisma.FloatFilter<"Order"> | number
   leverage?: Prisma.FloatFilter<"Order"> | number
+  lockedMargin?: Prisma.FloatFilter<"Order"> | number
+  reduceOnly?: Prisma.BoolFilter<"Order"> | boolean
+  source?: Prisma.StringFilter<"Order"> | string
+  reason?: Prisma.StringNullableFilter<"Order"> | string | null
+  acceptedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  engineSeq?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
 }, "id">
@@ -330,6 +394,12 @@ export type OrderOrderByWithAggregationInput = {
   quantity?: Prisma.SortOrder
   originalQuantity?: Prisma.SortOrder
   leverage?: Prisma.SortOrder
+  lockedMargin?: Prisma.SortOrder
+  reduceOnly?: Prisma.SortOrder
+  source?: Prisma.SortOrder
+  reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  engineSeq?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.OrderCountOrderByAggregateInput
@@ -353,6 +423,12 @@ export type OrderScalarWhereWithAggregatesInput = {
   quantity?: Prisma.FloatWithAggregatesFilter<"Order"> | number
   originalQuantity?: Prisma.FloatWithAggregatesFilter<"Order"> | number
   leverage?: Prisma.FloatWithAggregatesFilter<"Order"> | number
+  lockedMargin?: Prisma.FloatWithAggregatesFilter<"Order"> | number
+  reduceOnly?: Prisma.BoolWithAggregatesFilter<"Order"> | boolean
+  source?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  reason?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  acceptedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  engineSeq?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
 }
@@ -368,6 +444,12 @@ export type OrderCreateInput = {
   quantity: number
   originalQuantity?: number
   leverage?: number
+  lockedMargin?: number
+  reduceOnly?: boolean
+  source?: string
+  reason?: string | null
+  acceptedAt?: Date | string | null
+  engineSeq?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -383,6 +465,12 @@ export type OrderUncheckedCreateInput = {
   quantity: number
   originalQuantity?: number
   leverage?: number
+  lockedMargin?: number
+  reduceOnly?: boolean
+  source?: string
+  reason?: string | null
+  acceptedAt?: Date | string | null
+  engineSeq?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -398,6 +486,12 @@ export type OrderUpdateInput = {
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
   originalQuantity?: Prisma.FloatFieldUpdateOperationsInput | number
   leverage?: Prisma.FloatFieldUpdateOperationsInput | number
+  lockedMargin?: Prisma.FloatFieldUpdateOperationsInput | number
+  reduceOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  engineSeq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -413,6 +507,12 @@ export type OrderUncheckedUpdateInput = {
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
   originalQuantity?: Prisma.FloatFieldUpdateOperationsInput | number
   leverage?: Prisma.FloatFieldUpdateOperationsInput | number
+  lockedMargin?: Prisma.FloatFieldUpdateOperationsInput | number
+  reduceOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  engineSeq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -428,6 +528,12 @@ export type OrderCreateManyInput = {
   quantity: number
   originalQuantity?: number
   leverage?: number
+  lockedMargin?: number
+  reduceOnly?: boolean
+  source?: string
+  reason?: string | null
+  acceptedAt?: Date | string | null
+  engineSeq?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -443,6 +549,12 @@ export type OrderUpdateManyMutationInput = {
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
   originalQuantity?: Prisma.FloatFieldUpdateOperationsInput | number
   leverage?: Prisma.FloatFieldUpdateOperationsInput | number
+  lockedMargin?: Prisma.FloatFieldUpdateOperationsInput | number
+  reduceOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  engineSeq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -458,6 +570,12 @@ export type OrderUncheckedUpdateManyInput = {
   quantity?: Prisma.FloatFieldUpdateOperationsInput | number
   originalQuantity?: Prisma.FloatFieldUpdateOperationsInput | number
   leverage?: Prisma.FloatFieldUpdateOperationsInput | number
+  lockedMargin?: Prisma.FloatFieldUpdateOperationsInput | number
+  reduceOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  engineSeq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -473,6 +591,12 @@ export type OrderCountOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   originalQuantity?: Prisma.SortOrder
   leverage?: Prisma.SortOrder
+  lockedMargin?: Prisma.SortOrder
+  reduceOnly?: Prisma.SortOrder
+  source?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrder
+  engineSeq?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -482,6 +606,7 @@ export type OrderAvgOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   originalQuantity?: Prisma.SortOrder
   leverage?: Prisma.SortOrder
+  lockedMargin?: Prisma.SortOrder
 }
 
 export type OrderMaxOrderByAggregateInput = {
@@ -495,6 +620,12 @@ export type OrderMaxOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   originalQuantity?: Prisma.SortOrder
   leverage?: Prisma.SortOrder
+  lockedMargin?: Prisma.SortOrder
+  reduceOnly?: Prisma.SortOrder
+  source?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrder
+  engineSeq?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -510,6 +641,12 @@ export type OrderMinOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   originalQuantity?: Prisma.SortOrder
   leverage?: Prisma.SortOrder
+  lockedMargin?: Prisma.SortOrder
+  reduceOnly?: Prisma.SortOrder
+  source?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrder
+  engineSeq?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -519,6 +656,7 @@ export type OrderSumOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   originalQuantity?: Prisma.SortOrder
   leverage?: Prisma.SortOrder
+  lockedMargin?: Prisma.SortOrder
 }
 
 export type NullableFloatFieldUpdateOperationsInput = {
@@ -527,6 +665,18 @@ export type NullableFloatFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 
@@ -542,6 +692,12 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   quantity?: boolean
   originalQuantity?: boolean
   leverage?: boolean
+  lockedMargin?: boolean
+  reduceOnly?: boolean
+  source?: boolean
+  reason?: boolean
+  acceptedAt?: boolean
+  engineSeq?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["order"]>
@@ -557,6 +713,12 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   quantity?: boolean
   originalQuantity?: boolean
   leverage?: boolean
+  lockedMargin?: boolean
+  reduceOnly?: boolean
+  source?: boolean
+  reason?: boolean
+  acceptedAt?: boolean
+  engineSeq?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["order"]>
@@ -572,6 +734,12 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   quantity?: boolean
   originalQuantity?: boolean
   leverage?: boolean
+  lockedMargin?: boolean
+  reduceOnly?: boolean
+  source?: boolean
+  reason?: boolean
+  acceptedAt?: boolean
+  engineSeq?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["order"]>
@@ -587,11 +755,17 @@ export type OrderSelectScalar = {
   quantity?: boolean
   originalQuantity?: boolean
   leverage?: boolean
+  lockedMargin?: boolean
+  reduceOnly?: boolean
+  source?: boolean
+  reason?: boolean
+  acceptedAt?: boolean
+  engineSeq?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "market" | "side" | "type" | "status" | "price" | "quantity" | "originalQuantity" | "leverage" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "market" | "side" | "type" | "status" | "price" | "quantity" | "originalQuantity" | "leverage" | "lockedMargin" | "reduceOnly" | "source" | "reason" | "acceptedAt" | "engineSeq" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 
 export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Order"
@@ -607,6 +781,12 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     quantity: number
     originalQuantity: number
     leverage: number
+    lockedMargin: number
+    reduceOnly: boolean
+    source: string
+    reason: string | null
+    acceptedAt: Date | null
+    engineSeq: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["order"]>
@@ -1042,6 +1222,12 @@ export interface OrderFieldRefs {
   readonly quantity: Prisma.FieldRef<"Order", 'Float'>
   readonly originalQuantity: Prisma.FieldRef<"Order", 'Float'>
   readonly leverage: Prisma.FieldRef<"Order", 'Float'>
+  readonly lockedMargin: Prisma.FieldRef<"Order", 'Float'>
+  readonly reduceOnly: Prisma.FieldRef<"Order", 'Boolean'>
+  readonly source: Prisma.FieldRef<"Order", 'String'>
+  readonly reason: Prisma.FieldRef<"Order", 'String'>
+  readonly acceptedAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly engineSeq: Prisma.FieldRef<"Order", 'String'>
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Order", 'DateTime'>
 }

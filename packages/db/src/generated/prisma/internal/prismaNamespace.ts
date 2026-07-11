@@ -392,7 +392,8 @@ export const ModelName = {
   FundingRate: 'FundingRate',
   FundingPayment: 'FundingPayment',
   FeeAccount: 'FeeAccount',
-  PositionHistory: 'PositionHistory'
+  PositionHistory: 'PositionHistory',
+  ProcessedEvent: 'ProcessedEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -408,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "order" | "fill" | "position" | "insuranceFund" | "fundingRate" | "fundingPayment" | "feeAccount" | "positionHistory"
+    modelProps: "user" | "order" | "fill" | "position" | "insuranceFund" | "fundingRate" | "fundingPayment" | "feeAccount" | "positionHistory" | "processedEvent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1078,6 +1079,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ProcessedEvent: {
+      payload: Prisma.$ProcessedEventPayload<ExtArgs>
+      fields: Prisma.ProcessedEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProcessedEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProcessedEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedEventPayload>
+        }
+        findFirst: {
+          args: Prisma.ProcessedEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProcessedEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedEventPayload>
+        }
+        findMany: {
+          args: Prisma.ProcessedEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedEventPayload>[]
+        }
+        create: {
+          args: Prisma.ProcessedEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedEventPayload>
+        }
+        createMany: {
+          args: Prisma.ProcessedEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProcessedEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedEventPayload>[]
+        }
+        delete: {
+          args: Prisma.ProcessedEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedEventPayload>
+        }
+        update: {
+          args: Prisma.ProcessedEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProcessedEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProcessedEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProcessedEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProcessedEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedEventPayload>
+        }
+        aggregate: {
+          args: Prisma.ProcessedEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProcessedEvent>
+        }
+        groupBy: {
+          args: Prisma.ProcessedEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProcessedEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProcessedEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProcessedEventCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1141,6 +1216,12 @@ export const OrderScalarFieldEnum = {
   quantity: 'quantity',
   originalQuantity: 'originalQuantity',
   leverage: 'leverage',
+  lockedMargin: 'lockedMargin',
+  reduceOnly: 'reduceOnly',
+  source: 'source',
+  reason: 'reason',
+  acceptedAt: 'acceptedAt',
+  engineSeq: 'engineSeq',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1150,6 +1231,7 @@ export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof Or
 
 export const FillScalarFieldEnum = {
   id: 'id',
+  tradeId: 'tradeId',
   buyOrderId: 'buyOrderId',
   sellOrderId: 'sellOrderId',
   buyerId: 'buyerId',
@@ -1159,6 +1241,7 @@ export const FillScalarFieldEnum = {
   quantity: 'quantity',
   buyerFee: 'buyerFee',
   sellerFee: 'sellerFee',
+  takerSide: 'takerSide',
   createdAt: 'createdAt'
 } as const
 
@@ -1199,6 +1282,7 @@ export const FundingRateScalarFieldEnum = {
   id: 'id',
   market: 'market',
   rate: 'rate',
+  period: 'period',
   createdAt: 'createdAt'
 } as const
 
@@ -1244,6 +1328,14 @@ export const PositionHistoryScalarFieldEnum = {
 } as const
 
 export type PositionHistoryScalarFieldEnum = (typeof PositionHistoryScalarFieldEnum)[keyof typeof PositionHistoryScalarFieldEnum]
+
+
+export const ProcessedEventScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt'
+} as const
+
+export type ProcessedEventScalarFieldEnum = (typeof ProcessedEventScalarFieldEnum)[keyof typeof ProcessedEventScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1315,6 +1407,13 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -1450,6 +1549,7 @@ export type GlobalOmitConfig = {
   fundingPayment?: Prisma.FundingPaymentOmit
   feeAccount?: Prisma.FeeAccountOmit
   positionHistory?: Prisma.PositionHistoryOmit
+  processedEvent?: Prisma.ProcessedEventOmit
 }
 
 /* Types for Logging */

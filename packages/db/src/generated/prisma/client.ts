@@ -86,3 +86,8 @@ export type FeeAccount = Prisma.FeeAccountModel
  * 
  */
 export type PositionHistory = Prisma.PositionHistoryModel
+/**
+ * Model ProcessedEvent
+ * 
+ */
+export type ProcessedEvent = Prisma.ProcessedEventModel

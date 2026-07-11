@@ -38,6 +38,7 @@ export type FundingRateMinAggregateOutputType = {
   id: string | null
   market: string | null
   rate: number | null
+  period: Date | null
   createdAt: Date | null
 }
 
@@ -45,6 +46,7 @@ export type FundingRateMaxAggregateOutputType = {
   id: string | null
   market: string | null
   rate: number | null
+  period: Date | null
   createdAt: Date | null
 }
 
@@ -52,6 +54,7 @@ export type FundingRateCountAggregateOutputType = {
   id: number
   market: number
   rate: number
+  period: number
   createdAt: number
   _all: number
 }
@@ -69,6 +72,7 @@ export type FundingRateMinAggregateInputType = {
   id?: true
   market?: true
   rate?: true
+  period?: true
   createdAt?: true
 }
 
@@ -76,6 +80,7 @@ export type FundingRateMaxAggregateInputType = {
   id?: true
   market?: true
   rate?: true
+  period?: true
   createdAt?: true
 }
 
@@ -83,6 +88,7 @@ export type FundingRateCountAggregateInputType = {
   id?: true
   market?: true
   rate?: true
+  period?: true
   createdAt?: true
   _all?: true
 }
@@ -177,6 +183,7 @@ export type FundingRateGroupByOutputType = {
   id: string
   market: string
   rate: number
+  period: Date | null
   createdAt: Date
   _count: FundingRateCountAggregateOutputType | null
   _avg: FundingRateAvgAggregateOutputType | null
@@ -207,6 +214,7 @@ export type FundingRateWhereInput = {
   id?: Prisma.StringFilter<"FundingRate"> | string
   market?: Prisma.StringFilter<"FundingRate"> | string
   rate?: Prisma.FloatFilter<"FundingRate"> | number
+  period?: Prisma.DateTimeNullableFilter<"FundingRate"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"FundingRate"> | Date | string
 }
 
@@ -214,23 +222,27 @@ export type FundingRateOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   market?: Prisma.SortOrder
   rate?: Prisma.SortOrder
+  period?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type FundingRateWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  market_period?: Prisma.FundingRateMarketPeriodCompoundUniqueInput
   AND?: Prisma.FundingRateWhereInput | Prisma.FundingRateWhereInput[]
   OR?: Prisma.FundingRateWhereInput[]
   NOT?: Prisma.FundingRateWhereInput | Prisma.FundingRateWhereInput[]
   market?: Prisma.StringFilter<"FundingRate"> | string
   rate?: Prisma.FloatFilter<"FundingRate"> | number
+  period?: Prisma.DateTimeNullableFilter<"FundingRate"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"FundingRate"> | Date | string
-}, "id">
+}, "id" | "market_period">
 
 export type FundingRateOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   market?: Prisma.SortOrder
   rate?: Prisma.SortOrder
+  period?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.FundingRateCountOrderByAggregateInput
   _avg?: Prisma.FundingRateAvgOrderByAggregateInput
@@ -246,6 +258,7 @@ export type FundingRateScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"FundingRate"> | string
   market?: Prisma.StringWithAggregatesFilter<"FundingRate"> | string
   rate?: Prisma.FloatWithAggregatesFilter<"FundingRate"> | number
+  period?: Prisma.DateTimeNullableWithAggregatesFilter<"FundingRate"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"FundingRate"> | Date | string
 }
 
@@ -253,6 +266,7 @@ export type FundingRateCreateInput = {
   id?: string
   market: string
   rate: number
+  period?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -260,6 +274,7 @@ export type FundingRateUncheckedCreateInput = {
   id?: string
   market: string
   rate: number
+  period?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -267,6 +282,7 @@ export type FundingRateUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   market?: Prisma.StringFieldUpdateOperationsInput | string
   rate?: Prisma.FloatFieldUpdateOperationsInput | number
+  period?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -274,6 +290,7 @@ export type FundingRateUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   market?: Prisma.StringFieldUpdateOperationsInput | string
   rate?: Prisma.FloatFieldUpdateOperationsInput | number
+  period?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -281,6 +298,7 @@ export type FundingRateCreateManyInput = {
   id?: string
   market: string
   rate: number
+  period?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -288,6 +306,7 @@ export type FundingRateUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   market?: Prisma.StringFieldUpdateOperationsInput | string
   rate?: Prisma.FloatFieldUpdateOperationsInput | number
+  period?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -295,13 +314,20 @@ export type FundingRateUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   market?: Prisma.StringFieldUpdateOperationsInput | string
   rate?: Prisma.FloatFieldUpdateOperationsInput | number
+  period?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type FundingRateMarketPeriodCompoundUniqueInput = {
+  market: string
+  period: Date | string
 }
 
 export type FundingRateCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   market?: Prisma.SortOrder
   rate?: Prisma.SortOrder
+  period?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -313,6 +339,7 @@ export type FundingRateMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   market?: Prisma.SortOrder
   rate?: Prisma.SortOrder
+  period?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -320,6 +347,7 @@ export type FundingRateMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   market?: Prisma.SortOrder
   rate?: Prisma.SortOrder
+  period?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -333,6 +361,7 @@ export type FundingRateSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   market?: boolean
   rate?: boolean
+  period?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["fundingRate"]>
 
@@ -340,6 +369,7 @@ export type FundingRateSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   market?: boolean
   rate?: boolean
+  period?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["fundingRate"]>
 
@@ -347,6 +377,7 @@ export type FundingRateSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   market?: boolean
   rate?: boolean
+  period?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["fundingRate"]>
 
@@ -354,10 +385,11 @@ export type FundingRateSelectScalar = {
   id?: boolean
   market?: boolean
   rate?: boolean
+  period?: boolean
   createdAt?: boolean
 }
 
-export type FundingRateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "market" | "rate" | "createdAt", ExtArgs["result"]["fundingRate"]>
+export type FundingRateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "market" | "rate" | "period" | "createdAt", ExtArgs["result"]["fundingRate"]>
 
 export type $FundingRatePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "FundingRate"
@@ -366,6 +398,7 @@ export type $FundingRatePayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     market: string
     rate: number
+    period: Date | null
     createdAt: Date
   }, ExtArgs["result"]["fundingRate"]>
   composites: {}
@@ -793,6 +826,7 @@ export interface FundingRateFieldRefs {
   readonly id: Prisma.FieldRef<"FundingRate", 'String'>
   readonly market: Prisma.FieldRef<"FundingRate", 'String'>
   readonly rate: Prisma.FieldRef<"FundingRate", 'Float'>
+  readonly period: Prisma.FieldRef<"FundingRate", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"FundingRate", 'DateTime'>
 }
     
