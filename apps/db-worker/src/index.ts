@@ -1,208 +1,104 @@
-import { redis } from "@repo/redis";
-import { prisma } from "@repo/db";
-import "dotenv/config";
-function parseRedisFields(fields: string[]) {
-  const obj: Record<string, string> = {};
+import { prisma, withTransaction } from "@repo/db";
+import { closeRedis, consumeGroup, createRedisClient, ensureGroup, type StreamEvent } from "@repo/redis";
+import {
+  EVENT_TYPES,
+  GROUPS,
+  STREAMS,
+  createLogger,
+  installLifecycle,
+  onShutdown,
+  serializeError,
+  type EngineResult,
+} from "@repo/common";
+import { applyEngineResult } from "./settlement";
 
-  for (let i = 0; i < fields.length; i += 2) {
-    const key = fields[i];
-    const value = fields[i + 1];
+const log = createLogger("db-worker");
+const shutdown = installLifecycle(log);
+const reader = createRedisClient("db-worker-reader", log);
+const commands = createRedisClient("db-worker-commands", log);
+const PROCESSED_EVENT_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
 
-    obj[key] = value;
-  }
-
-  return obj;
-}
-async function processTradeEvents(){
-  let lastTradeId="$";
-  while (true) {
-    // console.log("Waiting for trade...");
-    const result = await redis.xread(
-      "BLOCK",
-      0,
-      "STREAMS",
-      "trade_events",
-      lastTradeId
-    );
-
-    if (!result) continue;
-    const [streamName, messages] = result[0];
-    for(const [messageId,fields] of messages){
-        const parsedFields=parseRedisFields(fields);
-        const event = {
-            type: parsedFields.type,
-            data: JSON.parse(parsedFields.data),
-        };
-        if(event.type==="TRADE_CREATED"){
-          const fill=event.data;
-          //commision fee
-          const  FEE_RATE=0.0005;
-          const notional=fill.price*fill.quantity;
-          const buyerFee=notional*FEE_RATE;
-          const sellerFee=notional*FEE_RATE;
-          //Fee Account 
-          await prisma.feeAccount.upsert({
-            where: {
-              market: fill.market,
-            },
-            update: {
-              balance: {
-                increment: buyerFee + sellerFee,
-              },
-            },
-            create: {
-              market: fill.market,
-              balance: buyerFee + sellerFee,
-            },
-          });
-          await prisma.fill.create({
-              data:{
-                  buyOrderId:fill.buyOrderId,
-                  sellOrderId:fill.sellOrderId,
-                  buyerId:fill.buyerId,
-                  sellerId:fill.sellerId,
-                  market:fill.market,
-                  price:fill.price,
-                  quantity:fill.quantity,
-                  buyerFee,
-                  sellerFee,
-              },
-          });
-          // buyer get the long position
-          await updatePosition({
-            userId:fill.buyerId,
-            market:fill.market,
-            side:"long",
-            price:fill.price,
-            quantity:fill.quantity,
-            leverage:fill.buyerLeverage,
-          });
-          // sort for the seller
-          await updatePosition({
-            userId:fill.sellerId,
-            market:fill.market,
-            side:"short",
-            price:fill.price,
-            quantity:fill.quantity,
-            leverage:fill.sellerLeverage
-          });
-          //updating the margin  with commision fee
-          await prisma.user.update({
-            where:{
-              id:fill.buyerId,
-            },
-            data:{
-              balance:{
-                decrement:buyerFee,
-              },
-            },
-          });
-          await prisma.user.update({
-            where:{id:fill.sellerId},
-            data:{
-              balance:{
-                decrement:sellerFee,
-              },
-            },
-          });
-          // console.log("Fill saved to DB",fill);
-        }
-        lastTradeId=messageId;
-    }
-  }
-}
-async function processOrderUpdate(){
-  let lastOrderUpdateId="$";
-  while(true){
-    const result=await redis.xread(
-      "BLOCK",
-      0,
-      "STREAMS",
-      "order_update_events",
-      lastOrderUpdateId
-    );
-    if(!result)continue;
-    const[streamName,messages]=result[0];
-    for (const [messageId,fields]of messages){
-      const parsedFields=parseRedisFields(fields);
-      const event={
-        type:parsedFields.type,
-        data:JSON.parse(parsedFields.data)
-      };
-      if(event.type==="ORDER_UPDATED"){
-        await prisma.order.update({
-          where:{
-            id:event.data.orderId
-          },
-          data:{
-            status:event.data.status,
-            quantity:event.data.quantity
-          }
-        });
-        // console.log("Order Updated",event.data);
-      }
-      lastOrderUpdateId=messageId;
-    }
-  }
+function isEngineResult(data: unknown): data is EngineResult {
+  const r = data as Partial<EngineResult>;
+  return (
+    typeof r === "object" &&
+    r !== null &&
+    typeof r.eventId === "string" &&
+    typeof r.orderId === "string" &&
+    typeof r.market === "string" &&
+    (r.action === "create" || r.action === "cancel") &&
+    Array.isArray(r.trades) &&
+    Array.isArray(r.orders)
+  );
 }
 
-async function updatePosition(params:{
-  userId:string;
-  market:string;
-  side:"long"|"short";
-  price:number;
-  quantity:number;
-  leverage:number;
-}){
-  const existingPosition=await prisma.position.findFirst({
-    where:{
-      userId:params.userId,
-      market:params.market,
-      side:params.side,
-      status:"open",
-    },
-  });
-  const margin=(params.price*params.quantity)/params.leverage;
-  if(!existingPosition){
-    await prisma.position.create({
-      data:{
-        userId:params.userId,
-        market:params.market,
-        side:params.side,
-        status:"open",
-        quantity:params.quantity,
-        entryPrice:params.price,
-        leverage:params.leverage,
-        margin,
-        pnl:0,
-      },
-    });
+async function handle(id: string, event: StreamEvent | null) {
+  if (!event || event.type !== EVENT_TYPES.ORDER_RESULT || !isEngineResult(event.data)) {
+    log.warn("unrecognized engine event skipped", { id, type: event?.type });
     return;
   }
-  const oldNotional=existingPosition.quantity*existingPosition.entryPrice;
-  const newNotional=params.price*params.quantity;
-  const newQuantity=existingPosition.quantity+params.quantity;
-  const newEntryPrice=(oldNotional+newNotional)/newQuantity;
-  await prisma.position.update({
-    where:{
-      id:existingPosition.id,
-    },
-    data:{
-      quantity:newQuantity,
-      entryPrice:newEntryPrice,
-      margin:existingPosition.margin+margin,
-    },
+  const result = event.data;
+  const outcome = await withTransaction((tx) => applyEngineResult(tx, result, log));
+  if (!outcome.applied) {
+    log.debug("engine event already applied", { id, eventId: result.eventId });
+    return;
+  }
+  if (outcome.trades > 0) {
+    log.info("trades settled", { orderId: result.orderId, market: result.market, trades: outcome.trades });
+  }
+  for (const liquidation of outcome.liquidations) {
+    log.info("position liquidated", liquidation as unknown as Record<string, unknown>);
+    await commands
+      .xadd(
+        STREAMS.LIQUIDATION_EVENTS,
+        "MAXLEN",
+        "~",
+        10_000,
+        "*",
+        "type",
+        EVENT_TYPES.POSITION_LIQUIDATED,
+        "data",
+        JSON.stringify({ ...liquidation, timestamp: Date.now() }),
+      )
+      .catch((err) => log.warn("failed to publish liquidation event", { err: serializeError(err) }));
+  }
+}
+
+async function main() {
+  onShutdown(async () => {
+    await closeRedis(commands);
+    await prisma.$disconnect();
   });
-
+  await prisma.$queryRaw`SELECT 1`;
+  await ensureGroup(commands, STREAMS.ENGINE_EVENTS, GROUPS.DB_WORKER, "$");
+  const cleanup = setInterval(async () => {
+    try {
+      const removed = await prisma.processedEvent.deleteMany({
+        where: { createdAt: { lt: new Date(Date.now() - PROCESSED_EVENT_RETENTION_MS) } },
+      });
+      if (removed.count > 0) log.info("pruned processed event markers", { removed: removed.count });
+    } catch (err) {
+      log.warn("processed event cleanup failed", { err: serializeError(err) });
+    }
+  }, 60 * 60 * 1000);
+  onShutdown(() => clearInterval(cleanup));
+  log.info("db-worker started");
+  const loop = consumeGroup({
+    client: reader,
+    stream: STREAMS.ENGINE_EVENTS,
+    group: GROUPS.DB_WORKER,
+    consumer: "db-worker",
+    log,
+    handle,
+  });
+  onShutdown(async () => {
+    await loop;
+    reader.disconnect();
+  });
+  await loop;
 }
 
-
-async function main(){
-  // console.log("DB Worker Started");
-  await Promise.all([
-    processTradeEvents(),
-    processOrderUpdate()
-  ]);
-}
-
-main();
+main().catch(async (err) => {
+  log.error("db-worker crashed", { err: serializeError(err) });
+  await shutdown("fatal", 1);
+});
