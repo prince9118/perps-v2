@@ -1,543 +1,133 @@
-import { prisma } from "@repo/db";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import "dotenv/config";
-import express from "express";
+import express, { type NextFunction, type Request, type Response } from "express";
 import cors from "cors";
-import { success } from "zod";
-import { authMiddleware } from "./middleware/auth";
-import { redis } from "@repo/redis";
+import { prisma } from "@repo/db";
+import { closeRedis } from "@repo/redis";
+import { installLifecycle, onShutdown, serializeError } from "@repo/common";
+import { log, redis } from "./lib/context";
+import { HttpError } from "./lib/http";
+import { requestLog } from "./middleware/requestLog";
+import { authRouter } from "./routes/auth";
+import { ordersRouter } from "./routes/orders";
+import { positionsRouter } from "./routes/positions";
+import { marketRouter } from "./routes/market";
+
+const shutdown = installLifecycle(log);
+const port = Number(process.env.PORT ?? 3001);
+
 const app = express();
-
+app.disable("x-powered-by");
+app.set("trust proxy", "loopback, linklocal, uniquelocal");
+app.use(requestLog);
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Cache-Control", "no-store");
+  next();
+});
 app.use(cors());
-app.use(express.json());
-const port = process.env.PORT;
+app.use(express.json({ limit: "16kb" }));
 
-app.get("/users", async (require, res) => {
-  const users = await prisma.user.findMany();
-  res.json({
-    users
-  });
-});
-function calculatePnl(position: any, currentPrice: number) {
-  if (position.side === "long") {
-    return (currentPrice - position.entryPrice) * position.quantity;
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => reject(new Error("timeout")), ms);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
   }
-
-  return (position.entryPrice - currentPrice) * position.quantity;
-}
-function calculateRealizedPnl(position: any, exitPrice: number) {
-  if (position.side === "long") {
-    return (exitPrice - position.entryPrice) * position.quantity;
-  }
-
-  return (position.entryPrice - exitPrice) * position.quantity;
-}
-function calculateLiquidationPrice(position: any) {
-  if (position.side === "long") {
-    return position.entryPrice * (1 - 1 / position.leverage);
-  }
-  return position.entryPrice * (1 + 1 / position.leverage);
-}
-function calculateRiskScore(position: any, markPrice: number) {
-  const pnl = calculatePnl(position, markPrice);
-
-  return Math.abs(pnl) / position.margin;
 }
 
-app.post("/auth/signup", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({
-      message: "Email and password required !"
-    });
+async function dependencyStatus() {
+  const [postgres, redisOk] = await Promise.all([
+    withTimeout(prisma.$queryRaw`SELECT 1`, 2_000).then(() => true, () => false),
+    withTimeout(redis.ping(), 2_000).then(() => true, () => false),
+  ]);
+  return { postgres, redis: redisOk };
+}
+
+let cachedStatus: { at: number; value: Awaited<ReturnType<typeof dependencyStatus>> } | null = null;
+
+async function cachedDependencyStatus() {
+  if (!cachedStatus || Date.now() - cachedStatus.at > 5_000) {
+    cachedStatus = { at: Date.now(), value: await dependencyStatus() };
   }
-  const existingUser = await prisma.user.findUnique({
-    where: { email }
-  });
-  if (existingUser) {
-    return res.status(400).json({
-      message: "user already exist"
-    });
-  }
-  const passwordHash = await bcrypt.hash(password, 10);
-  const user = await prisma.user.create({
-    data: {
-      email,
-      passwordHash,
-      balance: 10000,
-      lockedBalance: 0
-    },
-    select: {
-      id: true,
-      email: true,
-      balance: true,
-      lockedBalance: true,
-      createdAt: true
-    }
-  });
-  res.json({
-    success: true,
-    user
+  return cachedStatus.value;
+}
+
+app.get("/health", async (_req, res) => {
+  const status = await dependencyStatus();
+  const ok = status.postgres && status.redis;
+  res.status(ok ? 200 : 503).json({
+    status: ok ? "ok" : "degraded",
+    postgres: status.postgres ? "ok" : "down",
+    redis: status.redis ? "ok" : "down",
   });
 });
 
-app.post("/auth/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await prisma.user.findUnique({
-    where: { email }
-  });
-  if (!user) {
-    return res.status(400).json({
-      message: "Invalid credentials"
-    });
-  }
-  const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
-  if (!isPasswordValid) {
-    return res.status(400).json({
-      message: "Invalid Credentials"
-    });
-  }
-  const token = jwt.sign(
-    { userId: user.id, email: user.email },
-    process.env.JWT_SECRET!,
-    { expiresIn: "7d" }
-  );
-  res.json({
-    success: true,
-    token,
-    user: {
-      id: user.id,
-      email: user.email,
-      balance: user.balance,
-      lockedBalance: user.lockedBalance
-    }
-  });
-});
-
-app.get("/auth/me", authMiddleware, async (req: any, res) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: req.user.userId
-    },
-    select: {
-      id: true,
-      email: true,
-      balance: true,
-      lockedBalance: true,
-      createdAt: true
-    }
-  });
-  res.json({
-    user
-  });
-});
-
-// redis test order
-
-app.post("/test-order", async (req, res) => {
-  const { market, side, quantity } = req.body;
-  const event = {
-    market,
-    side,
-    quantity,
-    timestamp: Date.now()
-  };
-  const messageId = await redis.xadd(
-    "order_events",
-    "*",
-    "type",
-    "ORDER_CREATE",
-    "data",
-    JSON.stringify(event)
-  );
-  res.json({
-    success: true,
-    messageId
-  });
-});
-
-app.post("/orders", authMiddleware, async (req: any, res) => {
-  const { market, side, type, price, quantity, leverage } = req.body;
-  if (!market || !side || !type || !quantity || !leverage) {
-    return res.status(400).json({
-      message: "market ,side ,type ,quantity,and leverage are required"
-    });
-  }
-  if (type === "limit" && !price) {
-    return res.status(400).json({
-      message: "Price is required fot limit Order"
-    });
-  }
-
-  const dbOrder = await prisma.order.create({
-    data: {
-      userId: req.user.userId,
-      market,
-      side,
-      type,
-      status: "open",
-      price: type === "limit" ? price : null,
-      quantity,
-      leverage,
-      originalQuantity: quantity
-    }
-  });
-
-  const event = {
-    orderId: dbOrder.id,
-    userId: req.user.userId,
-    market,
-    side,
-    type,
-    price,
-    quantity,
-    leverage,
-    timestamp: Date.now()
-  };
-
-  const messageId = await redis.xadd(
-    "order_events",
-    "*", // message Id
-    "type",
-    "ORDER_CREATE",
-    "data",
-    JSON.stringify(event)
-  );
-  res.json({
-    success: true,
-    message: "Order Submitted",
-    order: dbOrder,
-    messageId
-  });
-});
-
-app.get("/orders", authMiddleware, async (req: any, res) => {
-  const orders = await prisma.order.findMany({
-    where: {
-      userId: req.user.userId
-    },
-    orderBy: {
-      createdAt: "desc"
-    }
-  });
-  res.json({
-    success: true,
-    orders
-  });
-});
-
-// get user fills
-
-app.get("/fills", authMiddleware, async (req: any, res) => {
-  // console.log("req.user in fills:", req.user);
-  const fills = await prisma.fill.findMany({
-    where: {
-      OR: [{ buyerId: req.user.userId }, { sellerId: req.user.userId }]
-    },
-    orderBy: {
-      createdAt: "desc"
-    }
-  });
-  res.json({
-    success: true,
-    fills
-  });
-});
-
-//positions
-app.get("/positions", authMiddleware, async (req: any, res) => {
-  // const currentPrice=Number(req.query.price);
-  // const currentPrice=Number(
-  //     await redis.get(`index_price:${positions.market}`)
-  // )
-
-  const positions = await prisma.position.findMany({
-    where: {
-      userId: req.user.userId,
-      status: "open"
-    },
-    orderBy: {
-      createdAt: "desc"
-    }
-  });
-
-  // const positionWithPnl=positions.map(async(position)=>{
-  //     const currentPrice=Number(
-  //         await redis.get(`index_price:${position.market}`)
-  //     );
-  //     // const pnl=currentPrice?calculatePnl(position,currentPrice):position.pnl;
-  //     const pnl=calculatePnl(position,currentPrice);
-  //     return{
-  //         ...position,
-  //         marketPrice:currentPrice,
-  //         unrealizedPnl:pnl,
-  //         liquidationPrice:calculateLiquidationPrice(position),
-  //     };
-  // });
-  const positionWithPnl = await Promise.all(
-    positions.map(async (position) => {
-      const markPrice = Number(
-        await redis.get(`index_price:${position.market}`)
-      );
-      const pnl = calculatePnl(position, markPrice);
-      return {
-        ...position,
-        markPrice,
-        unrealizedPnl: pnl,
-        liquidationPrice: calculateLiquidationPrice(position)
-      };
-    })
-  );
-  res.json({
-    success: true,
-    positions: positionWithPnl
-  });
-});
-
-app.post("/positions/close", authMiddleware, async (req: any, res) => {
-  const { positionId } = req.body;
-  if (!positionId) {
-    return res.status(400).json({
-      message: "PositionId is required"
-    });
-  }
-  const position = await prisma.position.findFirst({
-    where: {
-      id: positionId,
-      userId: req.user.userId,
-      status: "open"
-    }
-  });
-  if (!position) {
-    return res.status(404).json({
-      message: "Position not found"
-    });
-  }
-  const exitPrice = Number(await redis.get(`index_price:${position.market}`));
-  if (!exitPrice) {
-    return res.status(400).json({
-      message: "Market price unavailable"
-    });
-  }
-
-  if (!position) {
-    return res.status(404).json({
-      message: "Position not found"
-    });
-  }
-  const realizedPnl = calculateRealizedPnl(position, exitPrice);
-  const relesedMargin = position.margin;
-  await prisma.position.update({
-    where: {
-      id: position.id
-    },
-    data: {
-      status: "closed",
-      pnl: realizedPnl
-    }
-  });
-  await prisma.user.update({
-    where: {
-      id: req.user.userId
-    },
-    data: {
-      balance: {
-        increment: relesedMargin + realizedPnl
-      },
-      lockedBalance: {
-        decrement: relesedMargin
-      }
-    }
-  });
-  await prisma.positionHistory.create({
-    data: {
-      userId: position.userId,
-      market: position.market,
-      side: position.side,
-      quantity: position.quantity,
-      entryPrice: position.entryPrice,
-      exitPrice,
-      leverage: position.leverage,
-      margin: position.margin,
-      pnl: realizedPnl,
-      reason: "closed"
-    }
-  });
-  res.json({
-    success: true,
-    message: "position closed",
-    realizedPnl,
-    relesedMargin
-  });
-});
-
-app.get("/adl/ranking", authMiddleware, async (_req, res) => {
-  const positions = await prisma.position.findMany({
-    where: {
-      status: "open"
-    }
-  });
-  const ranked = await Promise.all(
-    positions.map(async (position) => {
-      const markPrice = Number(
-        await redis.get(`index_price:${position.market}`)
-      );
-      return {
-        positionId: position.id,
-        userid: position.userId,
-        market: position.market,
-        side: position.side,
-        margin: position.margin,
-        markPrice,
-        riskScore: calculateRiskScore(position, markPrice)
-      };
-    })
-  );
-  ranked.sort((a, b) => b.riskScore - a.riskScore);
-  res.json({
-    success: true,
-    ranked
-  });
-});
-
-//cancel order
-
-app.delete("/orders/:id", authMiddleware, async (req: any, res) => {
-  const orderId = req.params.id;
-  const order = await prisma.order.findFirst({
-    where: {
-      id: orderId,
-      userId: req.user.userId
-    }
-  });
-  if (!order) {
-    return res.status(404).json({
-      message: "Order not found"
-    });
-  }
-  if (order.status === "filled" || order.status === "cancelled") {
-    return res.status(400).json({
-      message: "order can not cancell"
-    });
-  }
-  await prisma.order.update({
-    where: {
-      id: order.id
-    },
-    data: {
-      status: "cancelled"
-    }
-  });
-  await redis.xadd(
-    "order_cancel_events",
-    "*",
-    "type",
-    "ORDER_CANCELLED",
-    "data",
-    JSON.stringify({
-      orderId: order.id,
-      market: order.market,
-      timestamp: Date.now()
-    })
-  );
-  res.json({
-    success: true,
-    message: "Order Cancelled"
-  });
-});
-//fee account
-
-app.get("/fee-account", async (_req, res) => {
-  const accounts = await prisma.feeAccount.findMany();
-
-  res.json({
-    success: true,
-    accounts
-  });
-});
-
-//position hostory
-app.get("/position-history", authMiddleware, async (req: any, res) => {
-  const history = await prisma.positionHistory.findMany({
-    where: {
-      userId: req.user.userId
-    },
-    orderBy: {
-      createdAt: "desc"
-    }
-  });
-  res.json({
-    success: true,
-    history
-  });
-});
-
-//health market
-app.get("/price/:market", async (req, res) => {
-  const market = req.params.market;
-  const price = await redis.get(`index_price:${market}`);
-  res.json({
-    success: true,
-    market,
-    price: Number(price)
-  });
-});
-
-//funding rate
-app.get("/funding-rate", async (req, res) => {
-  const rates = await prisma.fundingRate.findMany({
-    orderBy: {
-      createdAt: "desc"
-    }
-  });
-  res.json({
-    success: true,
-    rates
-  });
-});
-
-//insurance fund
-
-app.get("/insurance-fund", async (require, res) => {
-  const funds = await prisma.insuranceFund.findMany();
-  res.json({
-    success: true,
-    funds
-  });
-});
-
-//backend status
-app.get("/backend-status", async (req, res) => {
-  const users = await prisma.user.count();
-  const orders = await prisma.order.count();
-  const fills = await prisma.fill.count();
-  const positions = await prisma.position.count();
+app.get("/backend-status", async (_req, res) => {
+  const status = await cachedDependencyStatus();
   res.json({
     success: true,
     services: {
       api: "running",
-      postgres: "connected",
-      redis: "connected"
+      postgres: status.postgres ? "connected" : "disconnected",
+      redis: status.redis ? "connected" : "disconnected",
     },
-    counts: {
-      users,
-      orders,
-      fills,
-      positions
-    }
   });
 });
-const SUPPORTED_MARKETS = [
-  { market: "BTC-PERP", symbol: "BTCUSDT", baseAsset: "BTC" },
-  { market: "ETH-PERP", symbol: "ETHUSDT", baseAsset: "ETH" },
-  { market: "SOL-PERP", symbol: "SOLUSDT", baseAsset: "SOL" }
-];
 
-app.get("/markets", (req, res) => {
-  res.json({ success: true, markets: SUPPORTED_MARKETS });
+app.use("/auth", authRouter);
+app.use("/orders", ordersRouter);
+app.use(marketRouter);
+app.use(positionsRouter);
+
+app.use((_req, res) => {
+  res.status(404).json({ success: false, message: "Not found" });
 });
 
-app.listen(port, () => {
-  // console.log(`Backend is Working on Port ${port}`);
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  if (err instanceof HttpError) {
+    res.status(err.status).json({ success: false, message: err.message, ...err.extra });
+    return;
+  }
+  const type = (err as { type?: string }).type;
+  if (type === "entity.parse.failed") {
+    res.status(400).json({ success: false, message: "Malformed JSON body" });
+    return;
+  }
+  if (type === "entity.too.large") {
+    res.status(413).json({ success: false, message: "Request body too large" });
+    return;
+  }
+  const status = Number((err as { status?: number }).status);
+  if (status >= 400 && status < 500) {
+    res.status(status).json({ success: false, message: "Bad request" });
+    return;
+  }
+  log.error("unhandled request error", { err: serializeError(err) });
+  res.status(500).json({ success: false, message: "Internal server error" });
 });
+
+const server = app.listen(port, () => {
+  log.info("api started", { port });
+});
+server.on("error", (err) => {
+  log.error("http server error", { err: serializeError(err) });
+  void shutdown("server_error", 1);
+});
+
+onShutdown(async () => {
+  await closeRedis(redis);
+  await prisma.$disconnect();
+});
+onShutdown(
+  () =>
+    new Promise<void>((resolve) => {
+      server.close(() => resolve());
+      server.closeIdleConnections();
+    }),
+);
