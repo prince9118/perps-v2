@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Doto, Inter, Inter_Tight, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const interTight = Inter_Tight({ variable: "--font-inter-tight", subsets: ["latin"] });
+const robotoMono = Roboto_Mono({ variable: "--font-roboto-mono", subsets: ["latin"] });
+const doto = Doto({ variable: "--font-doto", subsets: ["latin"], weight: ["700", "900"] });
 
 export const metadata: Metadata = {
-  title: "Perps V2 | Trade Perpetual Futures",
-  description: "Trade BTC, ETH, SOL perpetual futures",
+  title: "Perps | Trade Perpetual Futures",
+  description: "Trade BTC, ETH, and SOL perpetual futures with up to 50× leverage.",
 };
 
 export default function RootLayout({
@@ -24,8 +19,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="h-screen flex flex-col bg-bg text-[#e2e5f5]">
+    <html
+      lang="en"
+      className={`${inter.variable} ${interTight.variable} ${robotoMono.variable} ${doto.variable} h-full antialiased`}
+    >
+      <body className="flex h-screen flex-col bg-bg text-fg">
         <Providers>{children}</Providers>
       </body>
     </html>
