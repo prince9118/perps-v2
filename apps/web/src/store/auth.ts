@@ -1,4 +1,3 @@
-//Zustand: logged-in user state
 import { create } from "zustand";
 
 interface User {

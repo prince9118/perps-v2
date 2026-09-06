@@ -55,26 +55,26 @@ export default function Orderbook({ market }: { market: string }) {
   return (
     <div className="flex flex-col h-full bg-card">
       <div className="flex items-center justify-between px-3 py-2.5 border-b border-line">
-        <span className="text-[11px] font-semibold text-dim uppercase tracking-widest">
+        <span className="text-xs font-semibold text-dim">
           Order Book
         </span>
         <div className="flex items-center gap-1.5">
-          <div className={`w-1.5 h-1.5 rounded-full ${connected ? "bg-buy shadow-[0_0_6px_rgba(16,185,129,0.7)]" : "bg-muted"}`} />
-          <span className={`text-[10px] font-medium ${connected ? "text-buy" : "text-muted"}`}>
+          <div className={`w-1.5 h-1.5 rounded-full ${connected ? "bg-buy " : "bg-muted"}`} />
+          <span className={`text-xs font-medium ${connected ? "text-buy" : "text-muted"}`}>
             {connected ? "Live" : "Offline"}
           </span>
         </div>
       </div>
 
       <div className="flex justify-between px-3 py-1.5 border-b border-line/50">
-        <span className="text-[10px] text-muted uppercase tracking-widest">Price</span>
-        <span className="text-[10px] text-muted uppercase tracking-widest">Size</span>
+        <span className="text-xs text-dim">Price</span>
+        <span className="text-xs text-dim">Size</span>
       </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 flex flex-col justify-end overflow-hidden">
           {orderbook.asks.length === 0 ? (
-            <p className="text-[10px] text-muted text-center py-4">No asks</p>
+            <p className="text-xs text-muted text-center py-4">No asks</p>
           ) : (
             [...orderbook.asks].reverse().map((ask, i) => (
               <div key={i} className="relative flex justify-between items-center px-3 py-[3px]">
@@ -82,10 +82,10 @@ export default function Orderbook({ market }: { market: string }) {
                   className="absolute right-0 top-0 bottom-0 bg-sell-dim"
                   style={{ width: `${(ask.quantity / maxQty) * 85}%` }}
                 />
-                <span className="relative text-[11px] text-sell font-medium tabular-nums">
+                <span className="relative text-xs text-sell font-medium tabular-nums">
                   {ask.price.toLocaleString(undefined, { minimumFractionDigits: 1 })}
                 </span>
-                <span className="relative text-[11px] text-dim tabular-nums">
+                <span className="relative text-xs text-dim tabular-nums">
                   {ask.quantity.toFixed(4)}
                 </span>
               </div>
@@ -94,13 +94,13 @@ export default function Orderbook({ market }: { market: string }) {
         </div>
 
         <div className="px-3 py-1.5 border-y border-line bg-panel flex items-center justify-between">
-          <span className="text-xs font-bold text-[#e2e5f5] tabular-nums">
+          <span className="text-xs font-bold text-fg tabular-nums">
             {orderbook.bids[0]
               ? `$${orderbook.bids[0].price.toLocaleString(undefined, { minimumFractionDigits: 1 })}`
               : "—"}
           </span>
           {spread !== null && (
-            <span className="text-[10px] text-muted tabular-nums">
+            <span className="text-xs text-muted tabular-nums">
               {spreadPct}%
             </span>
           )}
@@ -108,7 +108,7 @@ export default function Orderbook({ market }: { market: string }) {
 
         <div className="flex-1 overflow-hidden">
           {orderbook.bids.length === 0 ? (
-            <p className="text-[10px] text-muted text-center py-4">No bids</p>
+            <p className="text-xs text-muted text-center py-4">No bids</p>
           ) : (
             orderbook.bids.map((bid, i) => (
               <div key={i} className="relative flex justify-between items-center px-3 py-[3px]">
@@ -116,10 +116,10 @@ export default function Orderbook({ market }: { market: string }) {
                   className="absolute right-0 top-0 bottom-0 bg-buy-dim"
                   style={{ width: `${(bid.quantity / maxQty) * 85}%` }}
                 />
-                <span className="relative text-[11px] text-buy font-medium tabular-nums">
+                <span className="relative text-xs text-buy font-medium tabular-nums">
                   {bid.price.toLocaleString(undefined, { minimumFractionDigits: 1 })}
                 </span>
-                <span className="relative text-[11px] text-dim tabular-nums">
+                <span className="relative text-xs text-dim tabular-nums">
                   {bid.quantity.toFixed(4)}
                 </span>
               </div>

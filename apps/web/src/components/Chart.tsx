@@ -15,6 +15,7 @@ export default function Chart({ market }: { market: string }) {
     if (!containerRef.current) return;
     containerRef.current.innerHTML = "";
 
+    const theme = getComputedStyle(document.documentElement);
     const script = document.createElement("script");
     script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
     script.type = "text/javascript";
@@ -25,6 +26,8 @@ export default function Chart({ market }: { market: string }) {
       interval: "15",
       timezone: "Etc/UTC",
       theme: "dark",
+      backgroundColor: theme.getPropertyValue("--color-card").trim(),
+      gridColor: theme.getPropertyValue("--color-line").trim(),
       style: "1",
       locale: "en",
       hide_top_toolbar: false,
@@ -38,7 +41,7 @@ export default function Chart({ market }: { market: string }) {
   }, [market]);
 
   return (
-    <div className="tradingview-widget-container w-full h-full">
+    <div className="tradingview-widget-container h-full w-full bg-card">
       <div ref={containerRef} className="tradingview-widget-container__widget w-full h-full" />
     </div>
   );

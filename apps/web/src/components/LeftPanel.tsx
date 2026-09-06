@@ -54,44 +54,33 @@ export default function LeftPanel({ market }: { market: string }) {
 
   return (
     <div className="flex flex-col h-full bg-card">
-      {/* Header tabs */}
       <div className="flex items-center border-b border-line px-2 shrink-0">
         {(["book", "trades"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-3 py-2.5 text-[11px] font-semibold capitalize transition-all border-b-2 -mb-px ${
+            className={`px-3 py-2.5 text-xs font-semibold capitalize transition-all border-b-2 -mb-px ${
               tab === t
-                ? "border-accent text-[#e2e5f5]"
+                ? "border-link text-fg"
                 : "border-transparent text-muted hover:text-dim"
             }`}
           >
             {t === "book" ? "Order Book" : "Trades"}
           </button>
         ))}
-        {/* <div className="ml-auto flex items-center gap-1.5 pr-1">
-          <div
-            className={`w-1.5 h-1.5 rounded-full ${
-              connected
-                ? "bg-buy animate-pulse-dot"
-                : "bg-muted"
-            }`}
-          />
-        </div> */}
       </div>
 
       {tab === "book" ? (
         <div className="flex flex-col flex-1 overflow-hidden">
           <div className="flex justify-between px-3 py-1.5 border-b border-line/40 shrink-0">
-            <span className="text-[10px] text-muted uppercase tracking-widest">Price</span>
-            <span className="text-[10px] text-muted uppercase tracking-widest">Size</span>
+            <span className="text-xs text-dim">Price</span>
+            <span className="text-xs text-dim">Size</span>
           </div>
 
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Asks */}
             <div className="flex-1 flex flex-col justify-end overflow-hidden">
               {orderbook.asks.length === 0 ? (
-                <p className="text-[10px] text-muted text-center py-4">No asks</p>
+                <p className="text-xs text-muted text-center py-4">No asks</p>
               ) : (
                 [...orderbook.asks].reverse().map((ask, i) => (
                   <div key={i} className="relative flex justify-between items-center px-3 py-[3px] hover:bg-sell-dim/20 transition-colors duration-100">
@@ -99,10 +88,10 @@ export default function LeftPanel({ market }: { market: string }) {
                       className="absolute right-0 top-0 bottom-0 bg-sell-dim depth-bar"
                       style={{ width: `${(ask.quantity / maxQty) * 85}%` }}
                     />
-                    <span className="relative text-[11px] text-sell font-medium tabular-nums">
+                    <span className="relative text-xs text-sell font-medium tabular-nums">
                       {ask.price.toLocaleString(undefined, { minimumFractionDigits: 1 })}
                     </span>
-                    <span className="relative text-[11px] text-dim tabular-nums">
+                    <span className="relative text-xs text-dim tabular-nums">
                       {ask.quantity.toFixed(4)}
                     </span>
                   </div>
@@ -110,24 +99,22 @@ export default function LeftPanel({ market }: { market: string }) {
               )}
             </div>
 
-            {/* Mid price + spread */}
             <div className="px-3 py-1.5 border-y border-line bg-panel/80 flex items-center justify-between shrink-0 backdrop-blur-sm">
-              <span className="text-xs font-bold text-buy tabular-nums drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">
+              <span className="text-xs font-bold text-buy tabular-nums ">
                 {orderbook.bids[0]
                   ? `$${orderbook.bids[0].price.toLocaleString(undefined, { minimumFractionDigits: 1 })}`
                   : "—"}
               </span>
               {spreadPct && (
-                <span className="text-[10px] text-muted tabular-nums">
+                <span className="text-xs text-muted tabular-nums">
                   Spread {spreadPct}%
                 </span>
               )}
             </div>
 
-            {/* Bids */}
             <div className="flex-1 overflow-hidden">
               {orderbook.bids.length === 0 ? (
-                <p className="text-[10px] text-muted text-center py-4">No bids</p>
+                <p className="text-xs text-muted text-center py-4">No bids</p>
               ) : (
                 orderbook.bids.map((bid, i) => (
                   <div key={i} className="relative flex justify-between items-center px-3 py-[3px] hover:bg-buy-dim/20 transition-colors duration-100">
@@ -135,10 +122,10 @@ export default function LeftPanel({ market }: { market: string }) {
                       className="absolute right-0 top-0 bottom-0 bg-buy-dim depth-bar"
                       style={{ width: `${(bid.quantity / maxQty) * 85}%` }}
                     />
-                    <span className="relative text-[11px] text-buy font-medium tabular-nums">
+                    <span className="relative text-xs text-buy font-medium tabular-nums">
                       {bid.price.toLocaleString(undefined, { minimumFractionDigits: 1 })}
                     </span>
-                    <span className="relative text-[11px] text-dim tabular-nums">
+                    <span className="relative text-xs text-dim tabular-nums">
                       {bid.quantity.toFixed(4)}
                     </span>
                   </div>
@@ -150,12 +137,12 @@ export default function LeftPanel({ market }: { market: string }) {
       ) : (
         <div className="flex flex-col flex-1 overflow-hidden">
           <div className="flex justify-between px-3 py-1.5 border-b border-line/40 shrink-0">
-            <span className="text-[10px] text-muted uppercase tracking-widest">Price</span>
-            <span className="text-[10px] text-muted uppercase tracking-widest">Size</span>
+            <span className="text-xs text-dim">Price</span>
+            <span className="text-xs text-dim">Size</span>
           </div>
           <div className="flex-1 overflow-y-auto">
             {trades.length === 0 ? (
-              <p className="text-[10px] text-muted text-center py-8">
+              <p className="text-xs text-muted text-center py-8">
                 Waiting for trades...
               </p>
             ) : (
@@ -165,13 +152,13 @@ export default function LeftPanel({ market }: { market: string }) {
                   className="flex justify-between items-center px-3 py-[3px] hover:bg-panel/40"
                 >
                   <span
-                    className={`text-[11px] font-medium tabular-nums ${
+                    className={`text-xs font-medium tabular-nums ${
                       t.side === "buy" ? "text-buy" : "text-sell"
                     }`}
                   >
                     {Number(t.price).toLocaleString(undefined, { minimumFractionDigits: 1 })}
                   </span>
-                  <span className="text-[11px] text-dim tabular-nums">
+                  <span className="text-xs text-dim tabular-nums">
                     {Number(t.quantity).toFixed(4)}
                   </span>
                 </div>

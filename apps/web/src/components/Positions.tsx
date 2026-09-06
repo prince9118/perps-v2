@@ -149,15 +149,15 @@ export default function Positions({ market }: { market: string }) {
             <button
               key={key}
               onClick={() => setTab(key)}
-              className={`px-3 py-2.5 text-[11px] font-semibold transition-all border-b-2 -mb-px whitespace-nowrap ${
+              className={`px-3 py-2.5 text-xs font-semibold transition-all border-b-2 -mb-px whitespace-nowrap ${
                 tab === key
-                  ? "border-accent text-[#e2e5f5]"
+                  ? "border-link text-fg"
                   : "border-transparent text-muted hover:text-dim"
               }`}
             >
               {label}
               {count !== undefined && (
-                <span className={`ml-1.5 text-[10px] ${tab === key ? "text-dim" : "text-muted"}`}>
+                <span className={`ml-1.5 text-xs ${tab === key ? "text-dim" : "text-muted"}`}>
                   ({count})
                 </span>
               )}
@@ -168,13 +168,13 @@ export default function Positions({ market }: { market: string }) {
         <div className="ml-auto flex items-center gap-3 pr-4">
           {tab === "positions" && positions.length > 0 && (
             <>
-              <span className={`text-[11px] font-bold tabular-nums ${totalUnrealizedPnl >= 0 ? "text-buy" : "text-sell"}`}>
+              <span className={`text-xs font-bold tabular-nums ${totalUnrealizedPnl >= 0 ? "text-buy" : "text-sell"}`}>
                 {totalUnrealizedPnl >= 0 ? "+" : ""}${totalUnrealizedPnl.toFixed(2)} PnL
               </span>
               <button
                 onClick={handleCloseAll}
                 disabled={closingAll}
-                className="text-[10px] font-semibold text-muted hover:text-sell border border-line hover:border-sell/40 px-2 py-0.5 rounded transition-all disabled:opacity-50"
+                className="text-xs font-semibold text-muted hover:text-sell border border-line hover:border-sell/40 px-2 py-0.5 rounded transition-all disabled:opacity-50"
               >
                 {closingAll ? "Closing..." : "Close All"}
               </button>
@@ -184,25 +184,24 @@ export default function Positions({ market }: { market: string }) {
       </div>
 
       <div className="flex-1 overflow-auto">
-        {/* Positions tab */}
         {tab === "positions" && (
           positions.length === 0 ? (
             <Empty text="No open positions" />
           ) : (
-            <table className="w-full text-[11px]">
+            <table className="w-full text-xs">
               <Thead cols={["Market", "Side", "Size", "Entry", "Mark", "Liq.", "Lev.", "Margin", "PnL", ""]} />
               <tbody>
                 {positions.map((p) => {
                   const pnlPos = p.unrealizedPnl >= 0;
                   return (
                     <tr key={p.id} className="border-b border-line/40 hover:bg-panel/30 transition-colors">
-                      <td className="px-4 py-2.5 text-[#e2e5f5] font-semibold">{p.market}</td>
+                      <td className="px-4 py-2.5 text-fg font-semibold">{p.market}</td>
                       <td className={`px-4 py-2.5 font-bold ${p.side === "long" ? "text-buy" : "text-sell"}`}>
                         {p.side.toUpperCase()}
                       </td>
                       <td className="px-4 py-2.5 text-right text-dim tabular-nums">{p.quantity}</td>
                       <td className="px-4 py-2.5 text-right text-dim tabular-nums">${p.entryPrice.toLocaleString()}</td>
-                      <td className="px-4 py-2.5 text-right text-[#e2e5f5] tabular-nums">${p.markPrice.toLocaleString()}</td>
+                      <td className="px-4 py-2.5 text-right text-fg tabular-nums">${p.markPrice.toLocaleString()}</td>
                       <td className="px-4 py-2.5 text-right text-yellow-400 tabular-nums">${p.liquidationPrice.toLocaleString()}</td>
                       <td className="px-4 py-2.5 text-right text-dim tabular-nums">{p.leverage}×</td>
                       <td className="px-4 py-2.5 text-right text-dim tabular-nums">${p.margin.toLocaleString()}</td>
@@ -212,7 +211,7 @@ export default function Positions({ market }: { market: string }) {
                       <td className="px-4 py-2.5 text-right">
                         <button
                           onClick={() => closePosition(p.id)}
-                          className="text-[10px] font-semibold text-muted hover:text-sell border border-line hover:border-sell/40 px-2 py-0.5 rounded transition-all"
+                          className="text-xs font-semibold text-muted hover:text-sell border border-line hover:border-sell/40 px-2 py-0.5 rounded transition-all"
                         >
                           Close
                         </button>
@@ -225,35 +224,34 @@ export default function Positions({ market }: { market: string }) {
           )
         )}
 
-        {/* Open Orders tab */}
         {tab === "orders" && (
           openOrders.length === 0 ? (
             <Empty text="No open orders" />
           ) : (
-            <table className="w-full text-[11px]">
+            <table className="w-full text-xs">
               <Thead cols={["Market", "Side", "Type", "Price", "Size", "Lev.", "Status", ""]} />
               <tbody>
                 {openOrders.map((o) => (
                   <tr key={o.id} className="border-b border-line/40 hover:bg-panel/30 transition-colors">
-                    <td className="px-4 py-2.5 text-[#e2e5f5] font-semibold">{o.market}</td>
+                    <td className="px-4 py-2.5 text-fg font-semibold">{o.market}</td>
                     <td className={`px-4 py-2.5 font-bold ${o.side === "buy" ? "text-buy" : "text-sell"}`}>
                       {o.side.toUpperCase()}
                     </td>
                     <td className="px-4 py-2.5 text-dim capitalize">{o.type}</td>
-                    <td className="px-4 py-2.5 text-right text-[#e2e5f5] tabular-nums">
+                    <td className="px-4 py-2.5 text-right text-fg tabular-nums">
                       {o.price ? `$${o.price.toLocaleString()}` : "Market"}
                     </td>
                     <td className="px-4 py-2.5 text-right text-dim tabular-nums">{o.quantity}</td>
                     <td className="px-4 py-2.5 text-right text-dim tabular-nums">{o.leverage}×</td>
                     <td className="px-4 py-2.5 text-right">
-                      <span className="text-[10px] font-semibold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded capitalize">
+                      <span className="text-xs font-semibold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded capitalize">
                         {o.status}
                       </span>
                     </td>
                     <td className="px-4 py-2.5 text-right">
                       <button
                         onClick={() => cancelOrder(o.id)}
-                        className="text-[10px] font-semibold text-muted hover:text-sell border border-line hover:border-sell/40 px-2 py-0.5 rounded transition-all"
+                        className="text-xs font-semibold text-muted hover:text-sell border border-line hover:border-sell/40 px-2 py-0.5 rounded transition-all"
                       >
                         Cancel
                       </button>
@@ -265,32 +263,31 @@ export default function Positions({ market }: { market: string }) {
           )
         )}
 
-        {/* Trade History tab */}
         {tab === "history" && (
           positionHistory.length === 0 ? (
             <Empty text="No closed positions yet" />
           ) : (
-            <table className="w-full text-[11px]">
+            <table className="w-full text-xs">
               <Thead cols={["Market", "Side", "Size", "Entry", "Exit", "Lev.", "Margin", "Realized PnL", "Reason"]} />
               <tbody>
                 {positionHistory.map((h) => {
                   const pnlPos = h.pnl >= 0;
                   return (
                     <tr key={h.id} className="border-b border-line/40 hover:bg-panel/30 transition-colors">
-                      <td className="px-4 py-2.5 text-[#e2e5f5] font-semibold">{h.market}</td>
+                      <td className="px-4 py-2.5 text-fg font-semibold">{h.market}</td>
                       <td className={`px-4 py-2.5 font-bold ${h.side === "long" ? "text-buy" : "text-sell"}`}>
                         {h.side.toUpperCase()}
                       </td>
                       <td className="px-4 py-2.5 text-right text-dim tabular-nums">{h.quantity}</td>
                       <td className="px-4 py-2.5 text-right text-dim tabular-nums">${h.entryPrice.toLocaleString()}</td>
-                      <td className="px-4 py-2.5 text-right text-[#e2e5f5] tabular-nums">${h.exitPrice.toLocaleString()}</td>
+                      <td className="px-4 py-2.5 text-right text-fg tabular-nums">${h.exitPrice.toLocaleString()}</td>
                       <td className="px-4 py-2.5 text-right text-dim tabular-nums">{h.leverage}×</td>
                       <td className="px-4 py-2.5 text-right text-dim tabular-nums">${h.margin.toLocaleString()}</td>
                       <td className={`px-4 py-2.5 text-right font-bold tabular-nums ${pnlPos ? "text-buy" : "text-sell"}`}>
                         {pnlPos ? "+" : ""}${h.pnl.toFixed(2)}
                       </td>
                       <td className="px-4 py-2.5 text-right">
-                        <span className="text-[10px] text-muted capitalize">{h.reason}</span>
+                        <span className="text-xs text-muted capitalize">{h.reason}</span>
                       </td>
                     </tr>
                   );
@@ -300,23 +297,22 @@ export default function Positions({ market }: { market: string }) {
           )
         )}
 
-        {/* Fills tab */}
         {tab === "fills" && (
           fills.length === 0 ? (
             <Empty text="No fills yet" />
           ) : (
-            <table className="w-full text-[11px]">
+            <table className="w-full text-xs">
               <Thead cols={["Market", "Side", "Fill Price", "Size", "Time"]} />
               <tbody>
                 {fills.map((f) => {
                   const isBuyer = f.buyerId === user?.id;
                   return (
                     <tr key={f.id} className="border-b border-line/40 hover:bg-panel/30 transition-colors">
-                      <td className="px-4 py-2.5 text-[#e2e5f5] font-semibold">{f.market}</td>
+                      <td className="px-4 py-2.5 text-fg font-semibold">{f.market}</td>
                       <td className={`px-4 py-2.5 font-bold ${isBuyer ? "text-buy" : "text-sell"}`}>
                         {isBuyer ? "BUY" : "SELL"}
                       </td>
-                      <td className="px-4 py-2.5 text-right text-[#e2e5f5] tabular-nums">
+                      <td className="px-4 py-2.5 text-right text-fg tabular-nums">
                         ${Number(f.price).toLocaleString()}
                       </td>
                       <td className="px-4 py-2.5 text-right text-dim tabular-nums">{f.quantity}</td>
@@ -342,7 +338,7 @@ function Thead({ cols }: { cols: string[] }) {
         {cols.map((h, i) => (
           <th
             key={i}
-            className={`px-4 py-2 font-medium text-[10px] text-muted uppercase tracking-widest ${
+            className={`px-4 py-2 font-medium text-xs text-dim ${
               i > 1 ? "text-right" : "text-left"
             }`}
           >
@@ -357,7 +353,7 @@ function Thead({ cols }: { cols: string[] }) {
 function Empty({ text }: { text: string }) {
   return (
     <div className="h-full flex items-center justify-center">
-      <span className="text-[11px] text-muted">{text}</span>
+      <span className="text-xs text-muted">{text}</span>
     </div>
   );
 }

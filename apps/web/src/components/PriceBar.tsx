@@ -7,7 +7,7 @@ import { marketApi } from "@/lib/api";
 function Stat({
   label,
   value,
-  valueClass = "text-[#e2e5f5]",
+  valueClass = "text-fg",
 }: {
   label: string;
   value: string;
@@ -15,7 +15,7 @@ function Stat({
 }) {
   return (
     <div className="flex flex-col justify-center">
-      <span className="text-[10px] text-muted font-medium uppercase tracking-widest leading-none mb-1">
+      <span className="text-xs text-dim font-medium leading-none mb-1">
         {label}
       </span>
       <span className={`text-xs font-semibold tabular-nums ${valueClass}`}>{value}</span>
@@ -52,8 +52,8 @@ export default function PriceBar({ market }: { market: string }) {
   return (
     <div className="h-11 border-b border-line flex items-center px-5 gap-6 shrink-0 bg-card">
       <div className="flex items-baseline gap-3 shrink-0">
-        <span className="text-[10px] font-medium text-muted tracking-widest uppercase">{market}</span>
-        <span className="text-base font-bold text-[#e2e5f5] tabular-nums">
+        <span className="text-xs font-medium text-dim">{market}</span>
+        <span className="text-base font-bold text-fg tabular-nums">
           {price ? `$${price.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : "—"}
         </span>
       </div>
