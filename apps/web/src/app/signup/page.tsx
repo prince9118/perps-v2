@@ -16,6 +16,7 @@ import {
 } from "@/lib/validation";
 import { useAuthStore } from "@/store/auth";
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { GuestLogin } from "@/components/auth/GuestLogin";
 import { Field, PasswordField } from "@/components/ui/Field";
 
 const DEFAULT_REDIRECT = "/trade/BTC-PERP";
@@ -189,6 +190,10 @@ function SignupForm() {
           )}
         </button>
       </form>
+
+      <div className="mt-6">
+        <GuestLogin redirectTo={redirectTo} disabled={submitting} />
+      </div>
 
       <p className="mt-8 text-center text-sm text-dim">
         Already have an account?{" "}

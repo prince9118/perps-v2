@@ -20,6 +20,8 @@ export const authApi = {
   signup: (email: string, password: string) =>
     api.post("/auth/signup", { email, password }),
 
+  guest: () => api.post("/auth/guest"),
+
   me: () => api.get("/auth/me"),
 };
 

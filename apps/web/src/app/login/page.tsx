@@ -9,6 +9,7 @@ import { apiErrorMessage } from "@/lib/errors";
 import { EMAIL_MAX, PASSWORD_MAX, normalizeEmail, validateEmail, validateLoginPassword } from "@/lib/validation";
 import { useAuthStore } from "@/store/auth";
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { GuestLogin } from "@/components/auth/GuestLogin";
 import { Field, PasswordField } from "@/components/ui/Field";
 
 const DEFAULT_REDIRECT = "/trade/BTC-PERP";
@@ -139,6 +140,10 @@ function LoginForm() {
           )}
         </button>
       </form>
+
+      <div className="mt-6">
+        <GuestLogin redirectTo={redirectTo} disabled={submitting} />
+      </div>
 
       <p className="mt-8 text-center text-sm text-dim">
         New to Perps?{" "}

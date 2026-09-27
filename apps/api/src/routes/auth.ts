@@ -64,6 +64,16 @@ authRouter.post("/login", authLimiter, async (req, res) => {
   });
 });
 
+authRouter.post("/guest", async (_req, res) => {
+  const id = crypto.randomUUID();
+  const passwordHash = await bcrypt.hash(crypto.randomUUID(), BCRYPT_ROUNDS);
+  const user = await prisma.user.create({
+    data: { email: `guest-${id}@guest.perps`, passwordHash, balance: STARTING_BALANCE, lockedBalance: 0 },
+    select: userSelect,
+  });
+  res.status(201).json({ success: true, token: signToken(user), user });
+});
+
 authRouter.get("/me", authMiddleware, async (req, res) => {
   const user = await prisma.user.findUnique({ where: { id: userIdOf(req) }, select: userSelect });
   if (!user) throw new HttpError(401, "Invalid token");
