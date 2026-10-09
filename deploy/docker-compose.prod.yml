@@ -106,6 +106,8 @@ services:
       SITE_ADDRESS: ${SITE_ADDRESS}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - /opt/caddy-sites:/etc/caddy/sites:ro
+      - /opt/sites:/srv/sites:ro
       - caddydata:/data
       - caddyconfig:/config
     depends_on: [api, ws, web]

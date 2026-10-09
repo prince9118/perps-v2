@@ -14,3 +14,5 @@
 		reverse_proxy web:3000
 	}
 }
+
+import /etc/caddy/sites/*.caddy

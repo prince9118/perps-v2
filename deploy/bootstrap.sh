@@ -17,7 +17,7 @@ if [ ! -f /swapfile ]; then
   echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 fi
 
-sudo mkdir -p "$APP_DIR" && sudo chown "$USER:$USER" "$APP_DIR"
+sudo mkdir -p "$APP_DIR" /opt/caddy-sites /opt/sites && sudo chown "$USER:$USER" "$APP_DIR" /opt/caddy-sites /opt/sites
 
 # Secrets are generated once on the server and never leave it.
 if [ ! -f "$APP_DIR/.env" ]; then
